@@ -1,0 +1,2364 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Boxi Dev</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts - Fira Code (Monospace) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Font Awesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2j/HwY/a/No0xX/PxFnNK8M/s6V+zdyVZvR/yA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+    <style>
+        /* Custom Tailwind Configuration (optional, but good for consistency) */
+        :root {
+            /* Hacker Theme (Dark) Variables */
+            --background-color: #0d0d0d; /* Near Black */
+            --text-color-primary: #39ff14; /* Neon Green */
+            --text-color-secondary: #2aaa0b; /* Dimmer Green */
+            --section-bg-color: #1a1a1a; /* Dark Gray */
+            --nav-bg-color: #0d0d0d; /* Near Black */
+            --card-bg-color: rgba(57, 255, 20, 0.05); /* Neon Green Glass */
+            --input-bg-color: #1f1f1f; /* Darker Gray */
+            --input-border-color: #004d00; /* Dark Green */
+            --accent-color-start: #39ff14; /* Neon Green */
+            --accent-color-end: #9fff33; /* Lime Green */
+        }
+
+        body.light-mode {
+            /* Light Theme with Green Accents */
+            --background-color: #f8fafc; /* Light slate-50 */
+            --text-color-primary: #1e293b; /* Dark slate-800 */
+            --text-color-secondary: #475569; /* Medium slate-600 */
+            --section-bg-color: #ffffff; /* White */
+            --nav-bg-color: #f1f5f9; /* slate-100 */
+            --card-bg-color: rgba(255, 255, 255, 0.8); /* Lighter glassmorphism base */
+            --input-bg-color: #f1f5f9; /* slate-100 */
+            --input-border-color: #cbd5e1; /* slate-300 */
+            /* Green accents for light mode */
+            --accent-color-start: #00b300; /* Darker, readable green */
+            --accent-color-end: #39ff14; /* Neon Green */
+        }
+
+        body {
+            font-family: 'Fira Code', monospace;
+            background-color: var(--background-color);
+            color: var(--text-color-primary);
+            transition: background-color 0.3s ease, color 0.3s ease; /* Smooth theme transition */
+            /* Firefox Scrollbar support */
+            scrollbar-width: thin;
+            scrollbar-color: var(--accent-color-start) var(--background-color);
+            /* Hacker Target Crosshair Cursor */
+            cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24'%3E%3Ccircle cx='12' cy='12' r='10' fill='none' stroke='%2339ff14' stroke-width='1.5'/%3E%3Cline x1='12' y1='0' x2='12' y2='24' stroke='%2339ff14' stroke-width='1.5'/%3E%3Cline x1='0' y1='12' x2='24' y2='12' stroke='%2339ff14' stroke-width='1.5'/%3E%3Ccircle cx='12' cy='12' r='2' fill='%2339ff14'/%3E%3C/svg%3E") 12 12, crosshair;
+            /* បិទពណ៌ខៀវពេល Tap លើ iPhone */
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        /* Custom Hacker Scrollbar for Webkit (Chrome, Edge, Safari) */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: var(--background-color);
+            border-left: 1px solid var(--input-border-color);
+        }
+        ::-webkit-scrollbar-thumb {
+            background: var(--accent-color-start);
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--text-color-primary);
+        }
+
+        /* Hover state cursor for clickable elements */
+        a, button, select, input, textarea, label, .project-card, .skill-card, .filter-btn, .project-filter-btn, .cursor-pointer, .modal-thumbnail {
+            cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24'%3E%3Ccircle cx='12' cy='12' r='10' fill='%2339ff14' fill-opacity='0.2' stroke='%2339ff14' stroke-width='1.5'/%3E%3Cline x1='12' y1='0' x2='12' y2='24' stroke='%2339ff14' stroke-width='1.5'/%3E%3Cline x1='0' y1='12' x2='24' y2='12' stroke='%2339ff14' stroke-width='1.5'/%3E%3Ccircle cx='12' cy='12' r='3' fill='%2339ff14'/%3E%3C/svg%3E") 12 12, pointer !important;
+        }
+
+        /* Custom gradient text utility */
+        .gradient-text {
+            background-image: linear-gradient(to right, var(--accent-color-start), var(--accent-color-end));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            color: transparent; /* Fallback for browsers that don't support -webkit-text-fill-color */
+        }
+
+        /* Custom gradient background utility for buttons/cards */
+        .bg-gradient-custom {
+            background-image: linear-gradient(to right, var(--accent-color-start), var(--accent-color-end));
+        }
+
+        /* Glassmorphism effect */
+        .glassmorphism {
+            background-color: var(--card-bg-color);
+            backdrop-filter: blur(10px); /* Blur effect */
+            -webkit-backdrop-filter: blur(10px); /* សម្រាប់ Safari (iPhone) */
+            border: 1px solid rgba(255, 255, 255, 0.1); /* Subtle border */
+            transition: background-color 0.3s ease, border-color 0.3s ease;
+        }
+
+        body.light-mode .glassmorphism {
+            border: 1px solid rgba(0, 0, 0, 0.1); /* Darker border for light mode */
+        }
+
+        /* Project card hover effect */
+        .project-card {
+            position: relative;
+            z-index: 1;
+            overflow: hidden;
+            transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out, border-color 0.3s ease;
+        }
+
+        /* Animated Neon Border Running Effect */
+        .project-card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: conic-gradient(
+                transparent, 
+                var(--accent-color-start), 
+                transparent 30%
+            );
+            animation: neon-border-rotate 4s linear infinite;
+            z-index: -1;
+            opacity: 0.5;
+        }
+
+        @keyframes neon-border-rotate {
+            100% { transform: rotate(360deg); }
+        }
+
+        .project-card:hover {
+            transform: translateY(-5px) scale(1.02);
+            box-shadow: 0 10px 20px rgba(57, 255, 20, 0.3); /* Green glow */
+            border-color: var(--accent-color-start);
+        }
+
+        /* Skill card hover effect */
+        .skill-card {
+            transition: transform 0.8s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.3s ease, border-color 0.3s ease;
+            transform-style: preserve-3d;
+        }
+        .skill-card:hover {
+            transform: perspective(1000px) translateY(-10px) scale(1.05) rotateY(360deg) !important;
+            box-shadow: 0 15px 30px rgba(57, 255, 20, 0.3);
+            border-color: rgba(57, 255, 20, 0.5);
+        }
+
+        /* Skill card icon rotation on hover */
+        .skill-card i {
+            transition: transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+        .skill-card:hover i {
+            transform: rotate(360deg);
+        }
+
+        /* Hide elements initially for GSAP animations */
+        .gsap-reveal {
+            opacity: 0;
+            transform: translateY(50px);
+        }
+
+        /* 3D Hero Perspective */
+        #hero {
+            perspective: 1000px;
+        }
+        .hero-3d-card {
+            transform-style: preserve-3d;
+            transition: transform 0.1s ease-out;
+        }
+
+        /* Modal Animation Styles */
+        .modal-active {
+            overflow: hidden;
+        }
+        #project-modal {
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            display: none;
+        }
+        #project-modal.show {
+            display: flex;
+        }
+        .modal-content-anim {
+            transform: scale(0.9) translateY(20px);
+            transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        /* Melting blob for profile picture - Round base with stretching drip */
+        .melting-blob {
+            border-radius: 50%;
+            animation: morph-drip 4s ease-in-out infinite;
+            transition: all 1s ease-in-out;
+            border-bottom: 5px solid rgba(57, 255, 20, 1); /* Neon Green edge */
+            box-shadow: 0 0 30px rgba(57, 255, 20, 0.7), inset 0 -20px 40px rgba(57, 255, 20, 0.9);
+            position: relative; /* ធានាថារូបភាពស្ថិតនៅខាងក្នុង Container */
+            /* បង្ខំឱ្យ Browser ទាំងអស់កាត់រូបភាពតាមរាង Blob (Fix mobile clipping bug) */
+            -webkit-mask-image: -webkit-radial-gradient(white, black);
+            mask-image: radial-gradient(white, black);
+            isolation: isolate;
+            overflow: hidden;
+        }
+
+        @keyframes morph-drip {
+            0%, 100% {
+                border-radius: 50% 50% 45% 55% / 50% 50% 45% 55%;
+                transform: scaleY(1) translateY(0);
+                box-shadow: 0 0 25px rgba(57, 255, 20, 0.5), inset 0 -15px 25px rgba(57, 255, 20, 0.7);
+            }
+            50% {
+                /* Extreme stretch downwards to simulate melting drop while staying connected/roundish */
+                border-radius: 40% 60% 30% 70% / 40% 40% 80% 80%;
+                transform: scaleY(1.1) translateY(15px);
+                box-shadow: 0 25px 30px rgba(57, 255, 20, 0.8), inset 0 -30px 45px rgba(57, 255, 20, 1);
+            }
+        }
+
+        /* Liquid Matrix Wave inside Profile Image */
+        .image-liquid-wave {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: transparent;
+            /* Smooth realistic fluid SVGs for a real water look */
+            background-image: 
+                url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1200 800' preserveAspectRatio='none'%3E%3Cpath d='M0,100 C300,200 300,0 600,100 C900,200 900,0 1200,100 L1200,800 L0,800 Z' fill='rgba(57, 255, 20, 0.4)'/%3E%3C/svg%3E"),
+                url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1200 800' preserveAspectRatio='none'%3E%3Cpath d='M0,100 C300,0 300,200 600,100 C900,0 900,200 1200,100 L1200,800 L0,800 Z' fill='rgba(0, 150, 0, 0.6)'/%3E%3C/svg%3E");
+            background-repeat: repeat-x;
+            background-size: 600px 80%; /* ទឹកលិចត្រឹម 80% នៃកម្ពស់រូបភាព */
+            z-index: 3;
+            mix-blend-mode: normal; 
+            pointer-events: none;
+            animation: liquid-wave-action 4s linear infinite;
+        }
+
+        @keyframes liquid-wave-action {
+            0% { background-position: 0px 100%, 0px 100%; }
+            50% { background-position: -300px 110%, 300px 105%; } /* ទឹករលកអណ្តែតចុះឡើងៗទន់ភ្លន់ */
+            100% { background-position: -600px 100%, 600px 100%; }
+        }
+
+        /* Bubbles floating up inside Profile Image */
+        .image-bubbles {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: transparent;
+            background-image: 
+                url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 150 150'%3E%3Ccircle cx='30' cy='120' r='8' fill='none' stroke='rgba(57,255,20,0.7)' stroke-width='2'/%3E%3Ccircle cx='110' cy='70' r='12' fill='none' stroke='rgba(57,255,20,0.4)' stroke-width='2'/%3E%3Ccircle cx='70' cy='20' r='15' fill='none' stroke='rgba(57,255,20,0.5)' stroke-width='1.5'/%3E%3Ccircle cx='130' cy='140' r='6' fill='none' stroke='rgba(57,255,20,0.8)' stroke-width='2'/%3E%3C/svg%3E"),
+                url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='20' cy='80' r='4' fill='rgba(57,255,20,0.6)'/%3E%3Ccircle cx='80' cy='30' r='5' fill='none' stroke='rgba(57,255,20,0.9)' stroke-width='1.5'/%3E%3Ccircle cx='50' cy='90' r='3' fill='rgba(57,255,20,0.8)'/%3E%3Ccircle cx='90' cy='70' r='6' fill='none' stroke='rgba(57,255,20,0.5)' stroke-width='1'/%3E%3C/svg%3E");
+            background-repeat: repeat;
+            background-size: 150px 150px, 100px 100px;
+            z-index: 4; /* ស្ថិតនៅពីលើទឹករលក */
+            mix-blend-mode: screen;
+            pointer-events: none;
+            animation: bubbles-rise 6s linear infinite;
+        }
+
+        @keyframes bubbles-rise {
+            0% { background-position: 0px 0px, 0px 0px; }
+            100% { background-position: 0px -150px, 0px -200px; } /* ពពុះតូចរត់លឿនជាងពពុះធំ */
+        }
+
+        .animated-glow {
+            animation: glow 6s ease-in-out infinite;
+        }
+
+        @keyframes glow {
+            0%, 100% {
+                box-shadow: 0 0 25px rgba(57, 255, 20, 0.4), 0 0 40px rgba(57, 255, 20, 0.2);
+            }
+            50% {
+                box-shadow: 0 0 40px rgba(57, 255, 20, 0.6), 0 0 60px rgba(57, 255, 20, 0.4);
+            }
+        }
+
+        /* About Profile Image Blended Shadow Hover Effect */
+        #about-img-wrap {
+            transition: filter 0.4s ease, box-shadow 0.4s ease;
+        }
+        #about-img-wrap:hover {
+            box-shadow: 0 0 50px rgba(57, 255, 20, 0.7) !important;
+            filter: brightness(1.1);
+            animation-play-state: paused; /* បញ្ឈប់ចលនា glow ធម្មតាសិន ពេលកំពុង Hover */
+        }
+        #about-img-wrap img {
+            position: absolute; /* ដាក់រូបភាពឲ្យត្រួតស៊ីគ្នាបេះបិទ */
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 2;
+            border-radius: inherit; /* រក្សារាងមូលតាម Parent */
+            transition: transform 0.5s ease;
+            /* ជួយឱ្យការបង្ហាញរូបភាពរលូនលើ Mobile */
+            -webkit-backface-visibility: hidden;
+            backface-visibility: hidden;
+        }
+
+        /* Project Card Retro Scanline Effect */
+        .project-scanline {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 15px; /* កម្រាស់ខ្សែពន្លឺ */
+            background: linear-gradient(to bottom, transparent, rgba(57, 255, 20, 0.2), transparent);
+            z-index: 8;
+            pointer-events: none;
+            animation: scanline-move 4s linear infinite;
+        }
+        @keyframes scanline-move {
+            0% { transform: translateY(-20px); }
+            100% { transform: translateY(192px); } /* 192px ស្មើនឹង h-48 (កម្ពស់រូបភាព) */
+        }
+
+        #about-img-wrap:hover img {
+            transform: scale(1.1);
+        }
+
+        /* Profile Image Crossfade Animation */
+        .crossfade-img {
+            animation: profile-crossfade 4s infinite ease-in-out;
+        }
+        @media (max-width: 767px) {
+            .crossfade-img {
+                animation: profile-crossfade 2s infinite ease-in-out; /* លឿនជាងមុននៅលើទូរស័ព្ទ (សរុប ២ វិនាទី) */
+            }
+        }
+        @keyframes profile-crossfade {
+            0%, 35% { opacity: 1; }   /* បង្ហាញ hack.jpg */
+            50%, 85% { opacity: 0; }  /* រលាយបាត់ដើម្បីបង្ហាញ 1.jpg ពីក្រោម */
+            100% { opacity: 1; }      /* រលាយត្រលប់ទៅបង្ហាញ hack.jpg វិញ */
+        }
+
+        /* Blob animation keyframes */
+        @keyframes blob {
+            0%, 100% {
+                transform: translate(0, 0) scale(1);
+            }
+            33% {
+                transform: translate(30px, -50px) scale(1.1);
+            }
+            66% {
+                transform: translate(-20px, 40px) scale(0.9);
+            }
+        }
+
+        /* Typewriter Cursor */
+        @keyframes blink-cursor {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0; }
+        }
+        .typewriter-cursor::after {
+            content: '█';
+            color: var(--text-color-primary);
+            margin-left: 4px;
+            animation: blink-cursor 0.8s step-end infinite;
+        }
+
+        /* Custom Alert Icon Bouncing Effect */
+        @keyframes bounce-alert-icon {
+            0%, 100% {
+                transform: translateY(0) scale(1);
+            }
+            50% {
+                transform: translateY(-15px) scale(1.15); /* លោតឡើងលើបន្តិច និងរីកធំបន្តិច */
+            }
+        }
+        #custom-alert-icon i {
+            display: inline-block; /* ត្រូវការដើម្បីឲ្យ transform ដំណើរការលើ i tag */
+        }
+        #custom-alert-icon:hover i {
+            animation: bounce-alert-icon 0.6s ease-in-out infinite; /* ចលនាលោតរហូតដល់ដក Mouse ចេញ */
+        }
+
+        .animate-blob {
+            animation: blob 8s infinite ease-in-out;
+        }
+
+        .animation-delay-2000 {
+            animation-delay: 2s;
+        }
+
+        .animation-delay-4000 {
+            animation-delay: 4s;
+        }
+
+        /* Back to top float animation */
+        @keyframes float-up {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-8px); }
+        }
+        .animate-float-up {
+            animation: float-up 2s ease-in-out infinite;
+        }
+
+        /* Theme Toggle Rotation Hover Effect */
+        #theme-toggle i, #theme-toggle img {
+            transition: transform 0.3s ease-in-out;
+        }
+        #theme-toggle:hover i, #theme-toggle:hover img {
+            transform: rotate(20deg);
+        }
+
+        /* Mobile Menu Slide-in Effect */
+        #nav-links {
+            /* Default hidden state for mobile */
+            position: fixed;
+            top: 0;
+            right: 0;
+            height: 100dvh; /* ប្រើ Dynamic Height ដើម្បីកុំឱ្យរបារ Safari បាំង */
+            width: 75%; /* Or a fixed width like 250px */
+            max-width: 300px; /* Max width for larger phones */
+            background-color: var(--nav-bg-color);
+            transform: translateX(100%); /* Start off-screen to the right */
+            transition: transform 0.3s ease-out;
+            z-index: 40; /* Ensure it's above content but below modal */
+            display: flex; /* Always flex-col on mobile, but hidden by transform */
+            flex-direction: column;
+            align-items: flex-start; /* តម្រឹមអក្សរទៅខាងឆ្វេង */
+            justify-content: flex-start; /* ចាប់ផ្តើមពីខាងលើ */
+            padding: 6rem 2rem 2rem 2rem; /* រុញអក្សរចុះក្រោមឱ្យផុតពី NavBar ខាងលើ */
+            gap: 1.5rem; /* គម្លាតរវាង Link នីមួយៗ */
+            box-shadow: -5px 0 15px rgba(0,0,0,0.3); /* Shadow for slide-in effect */
+            overflow-y: auto; /* Allow scrolling if content overflows */
+            text-align: left;
+        }
+
+        /* State when menu is open */
+        #nav-links.mobile-menu-open {
+            transform: translateX(0); /* Slide into view */
+        }
+
+        /* Desktop overrides */
+        @media (min-width: 768px) { /* md breakpoint */
+            #nav-links {
+                position: relative; /* Reset position for desktop */
+                height: auto;
+                width: auto;
+                max-width: none;
+                background-color: transparent;
+                transform: translateX(0); /* Always visible on desktop */
+                transition: none; /* No transition on desktop */
+                z-index: auto;
+                display: flex; /* Ensure flex for desktop */
+                flex-direction: row; /* Row direction for desktop */
+                padding: 0;
+                gap: 0; /* No gap on desktop */
+                box-shadow: none;
+            }
+        }
+
+        /* Prevent scrolling of background content when mobile menu is active */
+        body.mobile-menu-active {
+            overflow: hidden;
+        }
+
+        /* Active Navigation Link Styling */
+        .nav-link.active {
+            background-image: linear-gradient(to right, var(--accent-color-start), var(--accent-color-end));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-weight: 700; /* Make it bold */
+        }
+
+        /* Glitch Effect */
+        .glitch {
+            position: relative;
+        }
+        .glitch::before,
+        .glitch::after {
+            content: attr(data-text);
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: linear-gradient(to right, var(--accent-color-start), var(--accent-color-end));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            color: transparent;
+            z-index: -1;
+            opacity: 0.9;
+        }
+        .glitch::before {
+            left: 3px;
+            text-shadow: -4px 0 8px rgba(255, 0, 0, 0.9); /* ស្រមោលក្រហមកាន់តែខ្លាំង */
+            animation: glitch-anim-1 2s infinite linear alternate-reverse;
+        }
+        .glitch::after {
+            left: -3px;
+            text-shadow: 4px 0 8px rgba(0, 255, 255, 0.9); /* ស្រមោលខៀវកាន់តែខ្លាំង */
+            animation: glitch-anim-2 3s infinite linear alternate-reverse;
+        }
+        @keyframes glitch-anim-1 {
+            0% { clip-path: inset(15% 0 75% 0); transform: translate(-3px, 2px); }
+            10% { clip-path: inset(55% 0 5% 0); transform: translate(3px, -2px); }
+            20% { clip-path: inset(35% 0 45% 0); transform: translate(-3px, 3px); }
+            30% { clip-path: inset(75% 0 0% 0); transform: translate(3px, -3px); }
+            40% { clip-path: inset(5% 0 65% 0); transform: translate(-2px, 2px); }
+            50% { clip-path: inset(25% 0 45% 0); transform: translate(2px, -2px); }
+            60% { clip-path: inset(65% 0 15% 0); transform: translate(-3px, 2px); }
+            70% { clip-path: inset(10% 0 75% 0); transform: translate(3px, -2px); }
+            80% { clip-path: inset(50% 0 30% 0); transform: translate(-2px, 3px); }
+            90% { clip-path: inset(0% 0 85% 0); transform: translate(2px, -3px); }
+            100% { clip-path: inset(40% 0 40% 0); transform: translate(-3px, 2px); }
+        }
+        @keyframes glitch-anim-2 {
+            0% { clip-path: inset(5% 0 65% 0); transform: translate(3px, -2px); }
+            10% { clip-path: inset(25% 0 15% 0); transform: translate(-3px, 2px); }
+            20% { clip-path: inset(65% 0 5% 0); transform: translate(3px, -3px); }
+            30% { clip-path: inset(15% 0 45% 0); transform: translate(-3px, 3px); }
+            40% { clip-path: inset(45% 0 25% 0); transform: translate(2px, -2px); }
+            50% { clip-path: inset(0% 0 75% 0); transform: translate(-2px, 2px); }
+            60% { clip-path: inset(60% 0 10% 0); transform: translate(3px, -2px); }
+            70% { clip-path: inset(20% 0 60% 0); transform: translate(-3px, 2px); }
+            80% { clip-path: inset(80% 0 0% 0); transform: translate(2px, -3px); }
+            90% { clip-path: inset(30% 0 50% 0); transform: translate(-2px, 3px); }
+            100% { clip-path: inset(10% 0 70% 0); transform: translate(3px, -2px); }
+        }
+    </style>
+    <style>
+        /* Glitch Effect for Profile Image */
+        .profile-image-glitch-container {
+            position: relative; /* Needed for absolute positioning of pseudo-elements */
+            overflow: hidden; /* Crucial to clip the glitch parts */
+        }
+
+        .profile-image-glitch-container img {
+            position: relative; /* Ensure the actual image is above pseudo-elements */
+            z-index: 2; /* Higher z-index than pseudo-elements */
+            /* Keep existing styles like transition, transform */
+        }
+
+        .profile-image-glitch-container::before,
+        .profile-image-glitch-container::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url('1.jpg'); /* Use the actual image path */
+            background-size: cover;
+            background-position: center;
+            z-index: 1; /* Below the actual image */
+            opacity: 0.8;
+            mix-blend-mode: screen; /* Experiment with 'difference', 'multiply', 'overlay' */
+            pointer-events: none; /* Don't interfere with mouse events on the main image */
+        }
+
+        .profile-image-glitch-container::before {
+            left: 3px; /* Offset */
+            filter: hue-rotate(90deg) saturate(200%); /* Color shift */
+            animation: image-glitch-anim-1 2s infinite linear alternate-reverse;
+        }
+
+        .profile-image-glitch-container::after {
+            left: -3px; /* Offset */
+            filter: hue-rotate(270deg) saturate(200%); /* Another color shift */
+            animation: image-glitch-anim-2 3s infinite linear alternate-reverse;
+        }
+
+        /* Reusing the glitch-anim keyframes from the text glitch for image parts */
+        /* (image-glitch-anim-1 and image-glitch-anim-2 are already defined above) */
+
+    </style>
+</head>
+<body class="overflow-x-hidden">
+    <!-- Matrix Rain Background -->
+        <canvas id="matrix-canvas" class="fixed inset-0 w-full h-full z-0 pointer-events-none opacity-60"></canvas>
+
+    <!-- Navigation Bar (Mobile-Responsive) -->
+    <nav class="fixed top-0 left-0 right-0 z-50 bg-[var(--nav-bg-color)] bg-opacity-90 backdrop-blur-sm py-4 md:py-4 px-6 md:px-8 flex flex-nowrap justify-between items-center shadow-lg" style="padding-top: calc(1rem + env(safe-area-inset-top));">
+        <a href="#hero" class="text-2xl font-bold gradient-text">Boxi Dev</a>
+        
+        <!-- Buttons Container (Theme Toggle & Mobile Menu) -->
+        <div class="flex items-center gap-3 md:order-2">
+            <!-- Theme Toggle Always Visible -->
+            <button id="theme-toggle" class="p-2 rounded-full bg-[var(--input-bg-color)] hover:bg-[var(--input-border-color)] transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-purple-500 shadow-md hover:shadow-lg hover:scale-110" aria-label="Toggle theme">
+                <img src="circle-half-stroke-solid.png" alt="Toggle Theme" class="w-6 h-6 object-contain drop-shadow-md invert">
+            </button>
+            <!-- Hamburger Menu Button for Mobile -->
+            <button id="hamburger-menu-btn" class="md:hidden p-2 rounded-full bg-[var(--input-bg-color)] hover:bg-[var(--input-border-color)] transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-purple-500" aria-label="Open navigation menu">
+                <img id="hamburger-icon-img" src="menu.png" alt="Menu" class="w-6 h-6 object-contain text-[var(--text-color-primary)]">
+                <i id="close-icon-fa" class="fas fa-times text-xl text-[var(--text-color-primary)] hidden"></i>
+            </button>
+        </div>
+
+        <!-- Mobile Menu Overlay -->
+        <div id="mobile-menu-overlay" class="fixed inset-0 bg-black/50 z-30 opacity-0 invisible transition-opacity duration-300"></div>
+
+        <!-- Navigation Links -->
+        <div id="nav-links" class="flex-col md:relative md:flex md:w-auto md:items-center md:space-x-6 md:mt-0 md:flex-row md:text-center md:order-1 md:bg-transparent md:p-0 md:shadow-none">
+            <a href="#about" class="block text-[var(--text-color-primary)] hover:text-purple-400 transition-colors duration-200 nav-link">About</a>
+            <a href="#skills" class="block text-[var(--text-color-primary)] hover:text-purple-400 transition-colors duration-200 nav-link">Skills</a>
+            <a href="#projects" class="block text-[var(--text-color-primary)] hover:text-purple-400 transition-colors duration-200 nav-link">Projects</a>
+            <a href="#contact" class="block text-[var(--text-color-primary)] hover:text-purple-400 transition-colors duration-200 nav-link">Contact</a>
+            <a href="https://applejr.net" target="_blank" class="block text-[var(--text-color-primary)] hover:text-purple-400 transition-colors duration-200 nav-link">Store iOS</a>
+        </div>
+    </nav>
+    <!-- Lenis Scroll Container (Content Wrapper) -->
+    <!-- Preloader -->
+    <div id="preloader" class="fixed inset-0 z-[9999] flex items-center justify-center bg-[var(--background-color)] transition-opacity duration-500">
+        <div class="loader"></div>
+    </div>
+    <div id="lenis-container">
+
+        <!-- Hero Section -->
+        <section id="hero" class="min-h-screen flex flex-col items-center justify-center text-center px-4 relative overflow-hidden">
+            <canvas id="spider-web-canvas" class="absolute inset-0 z-0 opacity-60"></canvas>
+            <div id="hero-content" class="space-y-6 z-10 pointer-events-none hero-3d-card relative">
+                <h1 class="text-5xl md:text-7xl font-extrabold leading-tight hero-element" style="transform: translateZ(50px);">
+                    Hello, I'm <span id="hero-boxi-dev" class="gradient-text inline-block glitch" data-text="Boxi Dev">Boxi Dev</span>
+                </h1>
+                <p id="typewriter-text" class="text-xl md:text-2xl text-gray-300 max-w-2xl mx-auto hero-element min-h-[4rem] md:min-h-[3rem]" style="transform: translateZ(30px);">
+                    Building modern automation tools and delightful user experiences with code.
+                </p>
+                <div class="pointer-events-auto" style="transform: translateZ(20px);">
+                    <a href="#projects" class="inline-block bg-gradient-custom text-black font-semibold py-3 px-8 rounded-full shadow-lg hover:shadow-xl transition-all duration-300 hero-element">
+                    View My Work
+                    </a>
+                </div>
+            </div>
+            <!-- Subtle background elements for visual interest (optional) -->
+            <div class="absolute top-1/4 left-1/4 w-48 h-48 bg-purple-600 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-blob" style="animation-delay: 0s;"></div>
+            <div class="absolute bottom-1/3 right-1/4 w-48 h-48 bg-pink-600 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-blob animation-delay-2000"></div>
+            <div class="absolute top-1/2 left-1/2 w-48 h-48 bg-blue-600 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-blob animation-delay-4000"></div>
+        </section>
+
+        <!-- About Me Section -->
+        <section id="about" class="py-20 md:py-32 px-4 bg-black/40 relative z-10 backdrop-blur-sm border-y border-[var(--input-border-color)]/30">
+            <div class="container mx-auto max-w-6xl">
+                <h2 class="text-4xl md:text-5xl font-bold text-center mb-16 gradient-text gsap-reveal">About Me</h2>
+                <div class="flex flex-col md:flex-row items-center gap-12">
+                    <div class="md:w-1/2 gsap-reveal flex justify-center">
+                        <div id="about-img-wrap" class="w-64 h-64 md:w-80 md:h-80 melting-blob mx-auto glassmorphism flex items-center justify-center transition-colors duration-300 pointer-events-auto">
+                            <img src="1.jpg" alt="Boxi Dev Profile" loading="lazy" class="object-cover w-full h-full">
+                            <img src="hack.jpg" alt="Hacker Profile" loading="lazy" class="object-cover w-full h-full crossfade-img">
+                            <div class="image-liquid-wave"></div>
+                            <div class="image-bubbles"></div>
+                        </div>
+                    </div>
+                    <div class="md:w-1/2 text-lg leading-relaxed space-y-6 gsap-reveal">
+                        <p>
+                            As a passionate <span class="font-semibold text-green-400">Cyber Security Specialist</span> and <span class="font-semibold text-green-300">Software Developer</span>, I thrive on transforming complex problems into elegant, user-friendly solutions. My journey in tech is fueled by a relentless curiosity and a desire to build software that not only functions flawlessly but also delights its users.
+                        </p>
+                        <p>
+                            I specialize in crafting highly secure and efficient applications, focusing on clean code, modern security principles, and seamless user experiences. From threat modeling to deployment, I enjoy every step of the development process, always seeking to learn and implement the latest technologies.
+                        </p>
+                        <p>
+                            When I'm not coding, you can find me exploring new design trends, contributing to open-source projects, or diving deep into the world of automation and efficiency. Let's build something amazing together!
+                        </p>
+
+                        <!-- Fake Terminal -->
+                        <div class="mt-8 bg-black/80 border border-[var(--input-border-color)] rounded-lg overflow-hidden shadow-[0_0_15px_rgba(57,255,20,0.15)] gsap-reveal">
+                            <div class="bg-[#1f1f1f] px-4 py-2 flex items-center gap-2 border-b border-[var(--input-border-color)]">
+                                <div class="w-3 h-3 rounded-full bg-red-500 shadow-[0_0_5px_rgba(239,68,68,0.8)]"></div>
+                                <div class="w-3 h-3 rounded-full bg-yellow-500 shadow-[0_0_5px_rgba(234,179,8,0.8)]"></div>
+                                <div class="w-3 h-3 rounded-full bg-green-500 shadow-[0_0_5px_rgba(34,197,94,0.8)]"></div>
+                                <span class="ml-2 text-xs text-gray-400 font-mono">boxi@kali:~</span>
+                            </div>
+                            <div id="terminal-body" class="p-4 font-mono text-sm md:text-base text-[var(--text-color-primary)] min-h-[175px]">
+                                <p><span class="text-blue-400">boxi@kali</span>:<span class="text-blue-400">~</span>$ <span class="typewriter-cursor"></span></p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Skills Section -->
+        <section id="skills" class="py-20 md:py-32 px-4">
+            <div class="container mx-auto max-w-6xl">
+                <h2 class="text-4xl md:text-5xl font-bold text-center mb-8 gradient-text gsap-reveal">My Skills</h2>
+                
+                <!-- Skills Filter Buttons -->
+                <div class="flex flex-wrap justify-center gap-3 mb-12 gsap-reveal">
+                    <button class="filter-btn bg-gradient-custom text-black px-4 md:px-6 py-2 rounded-full border-2 border-transparent hover:brightness-110 hover:hue-rotate-15 hover:scale-105 shadow-md hover:shadow-green-500/50 font-medium transition-all duration-300" data-filter="all">All</button>
+                    <button class="filter-btn text-[var(--text-color-primary)] hover:text-black px-4 md:px-6 py-2 rounded-full border-2 border-[var(--input-border-color)] hover:border-green-500 hover:bg-green-500/20 font-medium transition-all duration-300" data-filter="frontend">Frontend</button>
+                    <button class="filter-btn text-[var(--text-color-primary)] hover:text-black px-4 md:px-6 py-2 rounded-full border-2 border-[var(--input-border-color)] hover:border-green-500 hover:bg-green-500/20 font-medium transition-all duration-300" data-filter="backend">Backend</button>
+                    <button class="filter-btn text-[var(--text-color-primary)] hover:text-black px-4 md:px-6 py-2 rounded-full border-2 border-[var(--input-border-color)] hover:border-green-500 hover:bg-green-500/20 font-medium transition-all duration-300" data-filter="cyber-security">Security</button>
+                    <button class="filter-btn text-[var(--text-color-primary)] hover:text-black px-4 md:px-6 py-2 rounded-full border-2 border-[var(--input-border-color)] hover:border-green-500 hover:bg-green-500/20 font-medium transition-all duration-300" data-filter="other">Other</button>
+                </div>
+
+                <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-8">
+                    <!-- Skill Card 1 -->
+                    <div class="skill-card p-6 rounded-xl shadow-lg text-center glassmorphism gsap-reveal" data-category="backend">
+                        <i class="fab fa-python text-5xl text-blue-400 mb-4"></i>
+                        <h3 class="text-xl font-semibold">Python</h3>
+                        <p class="text-[var(--text-color-secondary)] text-sm">Scripting & Backend</p>
+                    </div>
+                    <!-- Skill Card 2 -->
+                    <div class="skill-card p-6 rounded-xl shadow-lg text-center glassmorphism gsap-reveal" data-category="other">
+                        <i class="fas fa-desktop text-5xl text-green-400 mb-4"></i>
+                        <h3 class="text-xl font-semibold">CustomTkinter</h3>
+                        <p class="text-[var(--text-color-secondary)] text-sm">Desktop UI</p>
+                    </div>
+                    <!-- Skill Card 3 -->
+                    <div class="skill-card p-6 rounded-xl shadow-lg text-center glassmorphism gsap-reveal" data-category="frontend">
+                        <i class="fas fa-palette text-5xl text-green-400 mb-4"></i>
+                        <h3 class="text-xl font-semibold">UI/UX Design</h3>
+                        <p class="text-[var(--text-color-secondary)] text-sm">Figma, Prototyping</p>
+                    </div>
+                    <!-- Skill Card 4 -->
+                    <div class="skill-card p-6 rounded-xl shadow-lg text-center glassmorphism gsap-reveal" data-category="frontend">
+                        <i class="fab fa-js-square text-5xl text-yellow-500 mb-4"></i>
+                        <h3 class="text-xl font-semibold">JavaScript</h3>
+                        <p class="text-[var(--text-color-secondary)] text-sm">Frontend Logic</p>
+                    </div>
+                    <!-- Skill Card 5 -->
+                    <div class="skill-card p-6 rounded-xl shadow-lg text-center glassmorphism gsap-reveal" data-category="frontend">
+                        <i class="fab fa-tailwind-css text-5xl text-green-400 mb-4"></i>
+                        <h3 class="text-xl font-semibold">Tailwind CSS</h3>
+                        <p class="text-[var(--text-color-secondary)] text-sm">Rapid Styling</p>
+                    </div>
+                    <!-- Skill Card 6 -->
+                    <div class="skill-card p-6 rounded-xl shadow-lg text-center glassmorphism gsap-reveal" data-category="other">
+                        <i class="fas fa-video text-5xl text-red-400 mb-4"></i>
+                        <h3 class="text-xl font-semibold">Video Processing</h3>
+                        <p class="text-[var(--text-color-secondary)] text-sm">FFmpeg, OpenCV</p>
+                    </div>
+                    <!-- Add more skills as needed -->
+                    <div class="skill-card p-6 rounded-xl shadow-lg text-center glassmorphism gsap-reveal" data-category="frontend">
+                        <i class="fab fa-html5 text-5xl text-green-400 mb-4"></i>
+                        <h3 class="text-xl font-semibold">HTML5</h3>
+                        <p class="text-[var(--text-color-secondary)] text-sm">Semantic Markup</p>
+                    </div>
+                    <div class="skill-card p-6 rounded-xl shadow-lg text-center glassmorphism gsap-reveal" data-category="frontend">
+                        <i class="fab fa-css3-alt text-5xl text-green-400 mb-4"></i>
+                        <h3 class="text-xl font-semibold">CSS3</h3>
+                        <p class="text-[var(--text-color-secondary)] text-sm">Modern Styling</p>
+                    </div>
+
+                    <!-- Full Stack Development Skills -->
+                    <div class="skill-card p-6 rounded-xl shadow-lg text-center glassmorphism gsap-reveal" data-category="frontend">
+                        <i class="fab fa-react text-5xl text-blue-400 mb-4"></i>
+                        <h3 class="text-xl font-semibold">React.js</h3>
+                        <p class="text-[var(--text-color-secondary)] text-sm">Frontend Framework</p>
+                    </div>
+                    <div class="skill-card p-6 rounded-xl shadow-lg text-center glassmorphism gsap-reveal" data-category="backend">
+                        <i class="fab fa-node-js text-5xl text-green-500 mb-4"></i>
+                        <h3 class="text-xl font-semibold">Node.js</h3>
+                        <p class="text-[var(--text-color-secondary)] text-sm">Backend Runtime</p>
+                    </div>
+                    <div class="skill-card p-6 rounded-xl shadow-lg text-center glassmorphism gsap-reveal" data-category="backend">
+                        <i class="fas fa-database text-5xl text-blue-300 mb-4"></i>
+                        <h3 class="text-xl font-semibold">Databases</h3>
+                        <p class="text-[var(--text-color-secondary)] text-sm">SQL & NoSQL</p>
+                    </div>
+                    <div class="skill-card p-6 rounded-xl shadow-lg text-center glassmorphism gsap-reveal" data-category="other">
+                        <i class="fab fa-git-alt text-5xl text-green-400 mb-4"></i>
+                        <h3 class="text-xl font-semibold">Git & GitHub</h3>
+                        <p class="text-[var(--text-color-secondary)] text-sm">Version Control</p>
+                    </div>
+
+                    <!-- Cyber Security Skills -->
+                    <div class="skill-card p-6 rounded-xl shadow-lg text-center glassmorphism gsap-reveal" data-category="cyber-security">
+                        <i class="fas fa-user-secret text-5xl text-purple-500 mb-4"></i>
+                        <h3 class="text-xl font-semibold">Ethical Hacking</h3>
+                        <p class="text-[var(--text-color-secondary)] text-sm">Penetration Testing</p>
+                    </div>
+                    <div class="skill-card p-6 rounded-xl shadow-lg text-center glassmorphism gsap-reveal" data-category="cyber-security">
+                        <i class="fas fa-shield-alt text-5xl text-green-400 mb-4"></i>
+                        <h3 class="text-xl font-semibold">Network Security</h3>
+                        <p class="text-[var(--text-color-secondary)] text-sm">Defense & Firewalls</p>
+                    </div>
+                    <div class="skill-card p-6 rounded-xl shadow-lg text-center glassmorphism gsap-reveal" data-category="cyber-security">
+                        <i class="fas fa-lock text-5xl text-green-400 mb-4"></i>
+                        <h3 class="text-xl font-semibold">Cryptography</h3>
+                        <p class="text-[var(--text-color-secondary)] text-sm">Data Encryption</p>
+                    </div>
+                    <div class="skill-card p-6 rounded-xl shadow-lg text-center glassmorphism gsap-reveal" data-category="cyber-security">
+                        <i class="fab fa-linux text-5xl text-gray-300 mb-4"></i>
+                        <h3 class="text-xl font-semibold">Linux Admin</h3>
+                        <p class="text-[var(--text-color-secondary)] text-sm">OS & CLI Tools</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Projects / Portfolio Section -->
+        <section id="projects" class="py-20 md:py-32 px-4 transition-colors duration-300 relative overflow-hidden">
+            <!-- Hacker Code Video Background -->
+            <div class="absolute inset-0 z-0">
+                <!-- Dark overlay for text readability -->
+                <div class="absolute inset-0 bg-slate-900/80 z-10 transition-colors duration-300"></div>
+                <video autoplay loop muted playsinline class="w-full h-full object-cover">
+                    <source src="https://assets.mixkit.co/videos/preview/mixkit-software-developer-working-on-code-227-large.mp4" type="video/mp4">
+                </video>
+            </div>
+            <div class="container mx-auto max-w-6xl relative z-10">
+                <h2 class="text-4xl md:text-5xl font-bold text-center mb-8 gradient-text gsap-reveal">My Projects</h2>
+                
+                <!-- Projects Filter Buttons -->
+                <div class="flex flex-wrap justify-center gap-3 mb-12 gsap-reveal">
+                    <button class="project-filter-btn bg-gradient-custom text-black px-4 md:px-6 py-2 rounded-full border-2 border-transparent hover:brightness-110 hover:hue-rotate-15 hover:scale-105 shadow-md hover:shadow-green-500/50 font-medium transition-all duration-300" data-filter="all">All</button>
+                    <button class="project-filter-btn text-[var(--text-color-primary)] hover:text-black px-4 md:px-6 py-2 rounded-full border-2 border-[var(--input-border-color)] hover:border-green-500 hover:bg-green-500/20 font-medium transition-all duration-300" data-filter="frontend">Frontend</button>
+                    <button class="project-filter-btn text-[var(--text-color-primary)] hover:text-black px-4 md:px-6 py-2 rounded-full border-2 border-[var(--input-border-color)] hover:border-green-500 hover:bg-green-500/20 font-medium transition-all duration-300" data-filter="backend">Backend</button>
+                    <button class="project-filter-btn text-[var(--text-color-primary)] hover:text-black px-4 md:px-6 py-2 rounded-full border-2 border-[var(--input-border-color)] hover:border-green-500 hover:bg-green-500/20 font-medium transition-all duration-300" data-filter="other">Scripts</button>
+                </div>
+
+                <div id="projects-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 md:gap-10">
+                    <!-- Project cards will be dynamically loaded here by JavaScript -->
+                </div>
+            </div>
+        </section>
+
+        <!-- Contact Section (Footer) -->
+        <footer id="contact" class="relative overflow-hidden py-20 md:py-32 px-4 text-[var(--text-color-secondary)] transition-colors duration-300">
+            <!-- Hacker Code Video Background -->
+            <div class="absolute inset-0 z-0">
+                <!-- Dark overlay for text readability -->
+                <div class="absolute inset-0 bg-slate-900/80 backdrop-blur-sm z-10 transition-colors duration-300"></div>
+                <video autoplay loop muted playsinline class="w-full h-full object-cover scale-[1.2]">
+                    <source src="mrrobot.MP4" type="video/mp4">
+                </video>
+            </div>
+
+            <div class="relative z-10 container mx-auto max-w-4xl text-center">
+                <h2 class="text-4xl md:text-5xl font-bold mb-12 gradient-text gsap-reveal">Get in Touch</h2>
+
+                <div class="flex flex-col md:flex-row justify-center items-start gap-12 mb-16">
+                    <!-- Contact Form Placeholder -->
+                    <div class="md:w-1/2 w-full gsap-reveal">
+                        <h3 class="text-2xl font-semibold mb-6 text-[var(--text-color-primary)] transition-colors duration-300">Send a Message</h3>
+                        <form id="contact-form" class="space-y-6 text-left">
+                            <div>
+                                <label for="name" class="block text-sm font-medium text-[var(--text-color-secondary)] mb-2">Name</label>
+                                <input type="text" id="name" name="name" required class="w-full p-3 rounded-lg bg-[var(--input-bg-color)] border border-[var(--input-border-color)] focus:ring-2 focus:ring-green-500 focus:border-transparent outline-none transition-all duration-200" placeholder="Your Name">
+                            </div>
+                            <div>
+                                <label for="email" class="block text-sm font-medium text-[var(--text-color-secondary)] mb-2">Email</label>
+                                <input type="email" id="email" name="email" required class="w-full p-3 rounded-lg bg-[var(--input-bg-color)] border border-[var(--input-border-color)] focus:ring-2 focus:ring-green-500 focus:border-transparent outline-none transition-all duration-200" placeholder="your.email@example.com">
+                            </div>
+                            <div>
+                                <label for="message" class="block text-sm font-medium text-[var(--text-color-secondary)] mb-2">Message</label>
+                                <textarea id="message" name="message" rows="5" required class="w-full p-3 rounded-lg bg-[var(--input-bg-color)] border border-[var(--input-border-color)] focus:ring-2 focus:ring-green-500 focus:border-transparent outline-none transition-all duration-200" placeholder="Your message..."></textarea>
+                            </div>
+                            <button type="submit" class="w-full bg-gradient-custom text-black font-semibold py-3 px-6 rounded-lg shadow-md hover:shadow-lg hover:brightness-110 hover:hue-rotate-15 hover:scale-105 transition-all duration-300">
+                                Send Message
+                            </button>
+                        </form>
+                    </div>
+
+                    <!-- Contact Info & Social Media -->
+                    <div class="md:w-1/2 w-full gsap-reveal text-center md:text-left">
+                        <h3 class="text-2xl font-semibold mb-6 text-[var(--text-color-primary)] transition-colors duration-300">Connect With Me</h3>
+                        <div class="space-y-4 mb-8">
+                            <p class="flex items-center justify-center md:justify-start text-lg">
+                                <i class="fas fa-envelope text-green-400 mr-3"></i>
+                                <a href="mailto:your.email@example.com" class="hover:text-green-300 transition-colors duration-200">Boxidev@gmail.com</a>
+                            </p>
+                            <p class="flex items-center justify-center md:justify-start text-lg">
+                                <i class="fas fa-phone-alt text-green-400 mr-3"></i>
+                                <a href="tel:+1234567890" class="hover:text-green-300 transition-colors duration-200">0000000</a> <!-- Placeholder -->
+                            </p>
+                        </div>
+                        <div class="flex justify-center md:justify-start space-x-6 text-[var(--text-color-secondary)] pointer-events-auto">
+                            <a href="#" target="_blank" class="hover:text-green-400 transition-colors duration-200" aria-label="LinkedIn"><i class="fab fa-linkedin text-3xl"></i></a>
+                            <a href="https://github.com/bantu01001" target="_blank" class="hover:text-green-400 transition-colors duration-200" aria-label="GitHub">
+                                <img src="github.png" alt="GitHub" class="w-8 h-8 object-contain drop-shadow-md" onerror="this.outerHTML='<i class=&quot;fab fa-github text-3xl&quot;></i>'">
+                            </a>
+                            <a href="#" target="_blank" class="hover:text-green-400 transition-colors duration-200" aria-label="Twitter"><i class="fab fa-twitter text-3xl"></i></a>
+                            <a href="#" target="_blank" class="hover:text-green-400 transition-colors duration-200" aria-label="Dribbble"><i class="fab fa-dribbble text-3xl"></i></a>
+                            <a href="http.me/bantu_py" target="_blank" class="hover:text-green-400 transition-colors duration-200" aria-label="Telegram">
+                                <img src="telegram.png" alt="Telegram" class="w-8 h-8 object-contain drop-shadow-md" onerror="this.outerHTML='<i class=&quot;fab fa-telegram-plane text-3xl&quot;></i>'">
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <p class="text-sm text-gray-500 mt-16">&copy; 2026 Boxi. All rights reserved.</p>
+            </div>
+        </footer>
+
+        <!-- Project Detail Modal -->
+        <div id="project-modal" class="fixed inset-0 z-[100] items-center justify-center p-4 bg-black/90 backdrop-blur-md">
+            <div class="modal-content-anim glassmorphism w-full max-w-4xl max-h-[90vh] overflow-y-auto rounded-2xl relative">
+                <button id="close-modal" class="absolute top-4 right-4 text-white hover:text-green-500 transition-colors z-10">
+                    <i class="fas fa-times text-2xl"></i>
+                </button>
+                <div id="modal-data" class="p-6 md:p-10">
+                    <!-- Dynamic Content -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Custom Alert Modal (Success/Error) -->
+        <div id="custom-alert-modal" class="fixed inset-0 z-[200] flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm opacity-0 invisible transition-all duration-300">
+            <div id="custom-alert-content" class="glassmorphism w-full max-w-sm p-8 rounded-2xl text-center transform scale-90 transition-transform duration-300">
+                <div id="custom-alert-icon" class="text-6xl mb-4 drop-shadow-lg inline-block cursor-pointer"></div>
+                <h3 id="custom-alert-title" class="text-3xl font-bold mb-2 text-[var(--text-color-primary)]"></h3>
+                <p id="custom-alert-message" class="text-[var(--text-color-secondary)] mb-8 text-lg"></p>
+                <button id="close-custom-alert" class="w-full bg-gradient-custom text-black font-semibold py-3 px-6 rounded-full shadow-md hover:shadow-lg transition-all duration-300">
+                    OK
+                </button>
+            </div>
+        </div>
+
+        <!-- Back to Top Button -->
+        <button id="back-to-top" class="fixed bottom-8 right-8 w-12 h-12 flex items-center justify-center bg-gradient-custom text-black rounded-full shadow-[0_0_20px_rgba(57,255,20,0.6)] hover:shadow-[0_0_30px_rgba(57,255,20,0.9)] hover:scale-110 transition-all duration-300 opacity-0 invisible z-[999] pointer-events-auto animate-float-up" aria-label="Back to top">
+            <img src="arrow-up.png" alt="Back to top arrow" class="w-6 h-6 object-contain drop-shadow-lg" onerror="this.outerHTML='<i class=&quot;fas fa-arrow-up text-xl drop-shadow-lg&quot;></i>'">
+        </button>
+
+
+    </div> <!-- End Lenis Scroll Container -->
+
+    <!-- CDNs -->
+    <script src="https://unpkg.com/@studio-freight/lenis@1.0.42/dist/lenis.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+
+    <script>
+        // AI Welcome Audio via Web Speech API
+        let welcomeSpoken = false;
+        function playWelcomeAudio() {
+            if (welcomeSpoken || !('speechSynthesis' in window)) return;
+            const msg = new SpeechSynthesisUtterance("Welcome to website Boxi Dev. Feel free to explore my projects.");
+            msg.lang = 'en-US'; // កំណត់ភាសាជាភាសាអង់គ្លេស
+            msg.rate = 0.7;     // បន្ថយល្បឿនឲ្យយឺតនិងច្បាស់
+            msg.pitch = 1.2;    // កម្រិតសំឡេងស្តាប់ទៅទន់ភ្លន់
+
+            // ព្យាយាមស្វែងរកទម្រង់សំឡេងមនុស្សប្រុសអង់គ្លេស
+            const voices = window.speechSynthesis.getVoices();
+            const femaleVoice = voices.find(voice => voice.lang.includes('en') && (voice.name.toLowerCase().includes('female') || voice.name.toLowerCase().includes('girl') || voice.name.toLowerCase().includes('samantha') || voice.name.toLowerCase().includes('zira')));
+            if (femaleVoice) {
+                msg.voice = femaleVoice;
+            }
+
+            window.speechSynthesis.speak(msg);
+            welcomeSpoken = true;
+        }
+        
+        // ចាប់យកគ្រប់ចលនារបស់អ្នកប្រើប្រាស់ (Click, Touch, Scroll, Keydown) ដើម្បីធានាថាសំឡេងស្វាគមន៍ដើរ ១០០% ទាំងលើ Mobile/PC
+        ['click', 'touchstart', 'scroll', 'keydown'].forEach(evt => {
+            document.addEventListener(evt, playWelcomeAudio, { once: true });
+        });
+    </script>
+    <script>
+        // Preloader Logic
+        window.addEventListener('load', () => {
+            const preloader = document.getElementById('preloader');
+            if (preloader) {
+                gsap.to(preloader, {
+                    opacity: 0,
+                    duration: 0.7,
+                    delay: 0.5, // Small delay to ensure animation is seen
+                    onComplete: () => {
+                        preloader.style.display = 'none';
+                        preloader.remove(); // Remove from DOM after hiding
+                        // ព្យាយាមបញ្ចេញសំឡេងស្វាគមន៍បន្ទាប់ពី Preloader លោតចប់
+                        playWelcomeAudio();
+                        
+                        // Text Jump Animation for Hero Section (លោតអក្សរម្តងមួយៗ)
+                        gsap.fromTo(".char-anim", 
+                            { opacity: 0, y: 40, scale: 0.5, rotationX: -90 },
+                            { opacity: 1, y: 0, scale: 1, rotationX: 0, 
+                              duration: 0.8, stagger: 0.05, 
+                              ease: "back.out(1.5)" 
+                            }
+                        );
+                        
+                        // Hero Boxi Dev Flashing Animation
+                        gsap.to("#hero-boxi-dev", {
+                            scale: 1.05, // Make it pop a bit
+                            filter: "drop-shadow(0px 0px 20px rgba(57, 255, 20, 0.8))", // Neon Green Glow
+                            duration: 0.15,
+                            yoyo: true,
+                            repeat: 5, // លោតទៅមកចំនួន ៥ ដង
+                            ease: "power1.inOut",
+                            delay: 1.2 // រង់ចាំឲ្យអក្សរលោតចូលចប់សិនទើបបញ្ចេញពន្លឺ
+                        });
+                        
+                        // Start Typewriter Effect
+                        const typewriterEl = document.getElementById('typewriter-text');
+                        const textToType = "Building modern automation tools and delightful user experiences with code.";
+                        if (typewriterEl) {
+                            typewriterEl.innerHTML = ''; // លុបអក្សរចាស់ចេញសិនដើម្បីចាប់ផ្តើមវាយ
+                            typewriterEl.classList.add('typewriter-cursor'); // បន្ថែមសញ្ញា Cursor
+                            setTimeout(() => {
+                                let i = 0;
+                                function type() {
+                                    if (i < textToType.length) {
+                                        typewriterEl.innerHTML += textToType.charAt(i);
+                                        if (typeof playSciFiSound === 'function') playSciFiSound('typing'); // លេងសំឡេងវាយអក្សរ
+                                        i++;
+                                        setTimeout(type, 40); // ល្បឿន 40ms ក្នុងមួយអក្សរ
+                                    }
+                                }
+                                type();
+                            }, 1500); // ចាប់ផ្តើមបន្ទាប់ពីពាក្យ Boxi Dev លោតផ្លេកៗ
+                        }
+                    }
+                });
+            }
+        });
+    </script>
+    <script>
+        // --- Matrix Rain Effect ---
+        const matrixCanvas = document.getElementById('matrix-canvas');
+        if (matrixCanvas) {
+            const ctx = matrixCanvas.getContext('2d');
+            matrixCanvas.width = window.innerWidth;
+            matrixCanvas.height = window.innerHeight;
+
+            // តួអក្សរសម្រាប់ទម្លាក់ (រួមបញ្ចូលទាំងភាសាខ្មែរខ្លះៗ)
+            const katakana = 'アァカサタナハマヤャラワガザダバパイィキシチニヒミリヰギジヂビピウゥクスツヌフムユュルグズヅブプエェケセテネヘメレゲゼデベペオォコソトノホモヨョロゴゾドボポヴッン';
+            const latin = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+            const nums = '0123456789';
+            const khmer = 'កខគឃងចឆជឈញដឋឌឍណតថទធនបផពភមយរលវសហឡអ'; 
+            
+            const alphabet = katakana + latin + nums + khmer;
+            const fontSize = 16;
+            let columns = matrixCanvas.width / fontSize;
+            let rainDrops = [];
+
+            for (let x = 0; x < columns; x++) {
+                rainDrops[x] = 1;
+            }
+
+            const drawMatrix = () => {
+                const isLightMode = document.body.classList.contains('light-mode');
+                
+                // ពណ៌ផ្ទៃខាងក្រោយរលឹមៗ (Trail effect) ឲ្យស៊ីនឹងផ្ទៃ Background និងច្បាស់ជាងមុន
+                ctx.fillStyle = isLightMode ? 'rgba(248, 250, 252, 0.15)' : 'rgba(13, 13, 13, 0.1)';
+                ctx.fillRect(0, 0, matrixCanvas.width, matrixCanvas.height);
+
+                // ពណ៌អក្សរ Matrix - ប្រើពណ៌បៃតងចាស់បន្តិចក្នុង Light Mode ដើម្បីឲ្យមើលទៅច្បាស់
+                ctx.fillStyle = isLightMode ? '#008000' : '#39ff14';
+                ctx.font = fontSize + 'px monospace';
+
+                for (let i = 0; i < rainDrops.length; i++) {
+                    const text = alphabet.charAt(Math.floor(Math.random() * alphabet.length));
+                    ctx.fillText(text, i * fontSize, rainDrops[i] * fontSize);
+
+                    if (rainDrops[i] * fontSize > matrixCanvas.height && Math.random() > 0.975) {
+                        rainDrops[i] = 0;
+                    }
+                    rainDrops[i]++;
+                }
+            };
+
+            setInterval(drawMatrix, 35); // ល្បឿនធ្លាក់
+
+            window.addEventListener('resize', () => {
+                matrixCanvas.width = window.innerWidth;
+                matrixCanvas.height = window.innerHeight;
+                columns = matrixCanvas.width / fontSize;
+                rainDrops = [];
+                for (let x = 0; x < columns; x++) {
+                    rainDrops[x] = 1;
+                }
+            });
+        }
+
+        // --- Spider Web Effect (Restored for Hero Section) ---
+        const spiderCanvas = document.getElementById('spider-web-canvas');
+        if (spiderCanvas) {
+            const sCtx = spiderCanvas.getContext('2d');
+            let particles = [];
+            const numParticles = 80; // ចំនួនភាគល្អិត (Particles)
+            const maxDistance = 120; // ចម្ងាយអតិបរមាដើម្បីភ្ជាប់ខ្សែ
+            const particleSize = 1.5;
+            const particleSpeed = 0.5;
+
+            // ប្រអប់សម្រាប់ផ្ទុកទីតាំងរបស់ Mouse
+            let mouse = {
+                x: undefined,
+                y: undefined,
+                radius: 150 // ចម្ងាយដែល Mouse អាចឆក់ទាញខ្សែបាន (Pixels)
+            };
+
+            // ចាប់យកទីតាំង Mouse ពេលមានចលនា
+            window.addEventListener('mousemove', (event) => {
+                const rect = spiderCanvas.getBoundingClientRect();
+                mouse.x = event.clientX - rect.left;
+                mouse.y = event.clientY - rect.top;
+            });
+
+            // ចាប់យកការ Click ដើម្បីជះភាគល្អិត (Particles) បន្ថែម
+            window.addEventListener('click', (event) => {
+                // អនុញ្ញាតឱ្យជះភាគល្អិតតែពេលអ្នកប្រើប្រាស់ស្ថិតនៅផ្នែកខាងលើ (Hero Section)
+                if (window.scrollY < window.innerHeight) {
+                    const rect = spiderCanvas.getBoundingClientRect();
+                    const clickX = event.clientX - rect.left;
+                    const clickY = event.clientY - rect.top;
+
+                    // បង្កើតភាគល្អិតថ្មីចំនួន ១០ គ្រាប់ ពេលចុចម្តងៗ
+                    for (let i = 0; i < 10; i++) {
+                        const newParticle = new Particle(clickX, clickY);
+                        // បង្កើនល្បឿនបន្តិចដើម្បីឱ្យមើលទៅដូចការផ្ទុះជះចេញក្រៅ
+                        newParticle.vx = (Math.random() - 0.5) * (particleSpeed * 10);
+                        newParticle.vy = (Math.random() - 0.5) * (particleSpeed * 10);
+                        particles.push(newParticle);
+                    }
+
+                    // ការពារកុំឱ្យភាគល្អិតច្រើនពេកធ្វើឱ្យគាំង Browser (រក្សាត្រឹមចំនួនដើម + 50 គ្រាប់)
+                    if (particles.length > numParticles + 50) {
+                        particles.splice(0, 10);
+                    }
+                }
+            });
+
+            function Particle(x, y) {
+                this.x = x;
+                this.y = y;
+                this.vx = (Math.random() - 0.5) * particleSpeed;
+                this.vy = (Math.random() - 0.5) * particleSpeed;
+                const chars = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZアァカサタナハマヤャラワガザダバパイィកខគឃងចឆជឈញ';
+                this.char = chars.charAt(Math.floor(Math.random() * chars.length));
+            }
+
+            function initSpiderWeb() {
+                spiderCanvas.width = window.innerWidth;
+                spiderCanvas.height = window.innerHeight;
+                particles = [];
+                for (let i = 0; i < numParticles; i++) {
+                    particles.push(new Particle(Math.random() * spiderCanvas.width, Math.random() * spiderCanvas.height));
+                }
+            }
+
+            function animateSpiderWeb() {
+                requestAnimationFrame(animateSpiderWeb);
+                sCtx.clearRect(0, 0, spiderCanvas.width, spiderCanvas.height);
+
+                const isLightMode = document.body.classList.contains('light-mode');
+                // ប្តូរពណ៌ទៅជាបៃតង Neon ឲ្យត្រូវនឹង Hacker Theme
+                const particleColor = isLightMode ? 'rgba(0, 179, 0, 0.8)' : 'rgba(57, 255, 20, 0.8)'; 
+                const lineColor = isLightMode ? 'rgba(0, 179, 0, ' : 'rgba(57, 255, 20, ';
+
+                for (let i = 0; i < particles.length; i++) {
+                    const p1 = particles[i];
+                    p1.x += p1.vx;
+                    p1.y += p1.vy;
+                    if (p1.x < 0 || p1.x > spiderCanvas.width) p1.vx *= -1;
+                    if (p1.y < 0 || p1.y > spiderCanvas.height) p1.vy *= -1;
+
+                    sCtx.font = "12px monospace";
+                    sCtx.fillStyle = particleColor;
+                    sCtx.fillText(p1.char, p1.x, p1.y);
+
+                    // ភ្ជាប់ខ្សែពី Particle ទៅកាន់ Mouse
+                    if (mouse.x !== undefined && mouse.y !== undefined) {
+                        const mouseDistance = Math.sqrt(Math.pow(p1.x - mouse.x, 2) + Math.pow(p1.y - mouse.y, 2));
+                        if (mouseDistance < mouse.radius) {
+                            sCtx.beginPath();
+                            sCtx.moveTo(p1.x, p1.y);
+                            sCtx.lineTo(mouse.x, mouse.y);
+                            sCtx.strokeStyle = `${lineColor}${1 - (mouseDistance / mouse.radius)})`;
+                            sCtx.lineWidth = 1.5; // ខ្សែរាងក្រាស់បន្តិចពេលតភ្ជាប់នឹង Mouse
+                            sCtx.stroke();
+                        }
+                    }
+
+                    for (let j = i + 1; j < particles.length; j++) {
+                        const p2 = particles[j];
+                        const distance = Math.sqrt(Math.pow(p1.x - p2.x, 2) + Math.pow(p1.y - p2.y, 2));
+                        if (distance < maxDistance) {
+                            sCtx.beginPath();
+                            sCtx.moveTo(p1.x, p1.y);
+                            sCtx.lineTo(p2.x, p2.y);
+                            sCtx.strokeStyle = `${lineColor}${1 - (distance / maxDistance)})`;
+                            sCtx.lineWidth = 0.5;
+                            sCtx.stroke();
+                        }
+                    }
+                }
+            }
+            window.addEventListener('resize', initSpiderWeb);
+            initSpiderWeb();
+            animateSpiderWeb();
+        }
+
+        // Initialize Lenis for smooth scrolling
+        const lenis = new Lenis({
+            duration: 1.2,
+            easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)), // Custom easing for a buttery feel
+            direction: 'vertical',
+            gestureDirection: 'vertical',
+            smooth: true,
+            mouseMultiplier: 1,
+            smoothTouch: false,
+            touchMultiplier: 2,
+            infinite: false,
+        });
+
+        function raf(time) {
+            lenis.raf(time);
+            requestAnimationFrame(raf);
+        }
+        requestAnimationFrame(raf);
+
+        // --- Sci-Fi Sound Effects (Web Audio API) ---
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        let hoveredElement = null;
+
+        function playSciFiSound(type, param = 0) {
+            if (audioCtx.state === 'suspended') return; // ការពារកុំឱ្យចាក់សំឡេងមុនពេលអ្នកប្រើប្រាស់ចុចលើ Website
+            
+            const osc = audioCtx.createOscillator();
+            const gainNode = audioCtx.createGain();
+            
+            if (type === 'hover') {
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(800, audioCtx.currentTime);
+                osc.frequency.exponentialRampToValueAtTime(300, audioCtx.currentTime + 0.05);
+                gainNode.gain.setValueAtTime(0.015, audioCtx.currentTime); // សំឡេងស្រាលៗពេល Hover
+                gainNode.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.05);
+                osc.start();
+                osc.stop(audioCtx.currentTime + 0.05);
+            } else if (type === 'click') {
+                osc.type = 'square';
+                osc.frequency.setValueAtTime(1200, audioCtx.currentTime);
+                osc.frequency.exponentialRampToValueAtTime(100, audioCtx.currentTime + 0.1);
+                gainNode.gain.setValueAtTime(0.03, audioCtx.currentTime); // សំឡេង Tech Click ពេលចុច
+                gainNode.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.1);
+                osc.start();
+                osc.stop(audioCtx.currentTime + 0.1);
+            } else if (type === 'success') {
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(400, audioCtx.currentTime);
+                osc.frequency.setValueAtTime(600, audioCtx.currentTime + 0.1);
+                osc.frequency.setValueAtTime(1000, audioCtx.currentTime + 0.2);
+                gainNode.gain.setValueAtTime(0.05, audioCtx.currentTime);
+                gainNode.gain.linearRampToValueAtTime(0.001, audioCtx.currentTime + 0.3);
+                osc.start();
+                osc.stop(audioCtx.currentTime + 0.3);
+            } else if (type === 'error') {
+                osc.type = 'sawtooth';
+                osc.frequency.setValueAtTime(300, audioCtx.currentTime);
+                osc.frequency.exponentialRampToValueAtTime(50, audioCtx.currentTime + 0.3);
+                gainNode.gain.setValueAtTime(0.05, audioCtx.currentTime);
+                gainNode.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.3);
+                osc.start();
+                osc.stop(audioCtx.currentTime + 0.3);
+            } else if (type === 'scroll') {
+                const absVel = Math.abs(param); // ចាប់យកល្បឿន Scroll
+                const baseFreq = Math.min(1500, 400 + (absVel * 30)); // Scroll លឿន = សំឡេងស្រួចឡើង
+                const endFreq = Math.max(100, baseFreq / 3);
+                const vol = Math.min(0.02, 0.002 + (absVel * 0.0005)); // Scroll លឿន = សំឡេងឮខ្លាំងជាងមុនបន្តិច
+                osc.type = 'triangle';
+                osc.frequency.setValueAtTime(baseFreq, audioCtx.currentTime);
+                osc.frequency.exponentialRampToValueAtTime(endFreq, audioCtx.currentTime + 0.03);
+                gainNode.gain.setValueAtTime(vol, audioCtx.currentTime); 
+                gainNode.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.03);
+                osc.start();
+                osc.stop(audioCtx.currentTime + 0.03);
+            } else if (type === 'accessGrantedBeep') {
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(880, audioCtx.currentTime); // A high-pitched beep
+                osc.frequency.exponentialRampToValueAtTime(1200, audioCtx.currentTime + 0.05);
+                gainNode.gain.setValueAtTime(0.03, audioCtx.currentTime);
+                gainNode.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.05);
+                osc.start();
+                osc.stop(audioCtx.currentTime + 0.05);
+
+            } else if (type === 'payloadBeep') {
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(700, audioCtx.currentTime);
+                osc.frequency.exponentialRampToValueAtTime(500, audioCtx.currentTime + 0.05);
+                gainNode.gain.setValueAtTime(0.02, audioCtx.currentTime);
+                gainNode.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.05);
+                osc.start();
+                osc.stop(audioCtx.currentTime + 0.05);
+
+            } else if (type === 'typing') {
+                osc.type = 'square';
+                // ប្តូរកម្រិតសំឡេង (Pitch) តិចតួចរាល់ពេលវាយ ដើម្បីឲ្យដូចសំឡេង Keyboard ពិតៗ
+                osc.frequency.setValueAtTime(800 + Math.random() * 200, audioCtx.currentTime);
+                gainNode.gain.setValueAtTime(0.015, audioCtx.currentTime); // សំឡេងតិចល្មម
+                gainNode.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.02); // ខ្លីៗកុំឲ្យរំខាន
+                osc.start();
+                osc.stop(audioCtx.currentTime + 0.02);
+            } else if (type === 'cyber-card') {
+                osc.type = 'square';
+                osc.frequency.setValueAtTime(1200, audioCtx.currentTime);
+                osc.frequency.exponentialRampToValueAtTime(1800, audioCtx.currentTime + 0.05);
+                gainNode.gain.setValueAtTime(0.02, audioCtx.currentTime);
+                gainNode.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.1);
+                osc.start();
+                osc.stop(audioCtx.currentTime + 0.02);
+            }
+            
+            osc.connect(gainNode);
+            gainNode.connect(audioCtx.destination);
+        }
+
+        // Register GSAP ScrollTrigger plugin
+        gsap.registerPlugin(ScrollTrigger);
+
+        // --- 3D Hero Animation Control ---
+        const heroContent = document.getElementById('hero-content');
+        const heroSection = document.getElementById('hero');
+
+        heroSection.addEventListener('mousemove', (e) => {
+            const { clientX, clientY } = e;
+            const { innerWidth, innerHeight } = window;
+            
+            const xRotation = ((clientY / innerHeight) - 0.5) * -20; // Tilt range -10 to 10
+            const yRotation = ((clientX / innerWidth) - 0.5) * 20;
+
+            gsap.to(heroContent, {
+                rotateX: xRotation,
+                rotateY: yRotation,
+                duration: 0.5,
+                ease: "power2.out"
+            });
+        });
+
+        heroSection.addEventListener('mouseleave', () => {
+            gsap.to(heroContent, { rotateX: 0, rotateY: 0, duration: 0.8, ease: "elastic.out(1, 0.5)" });
+        });
+
+        // --- 3D About Section Animation Control ---
+        const aboutSection = document.getElementById('about');
+        const aboutImgWrap = document.getElementById('about-img-wrap');
+
+        if (aboutSection && aboutImgWrap) {
+            aboutSection.addEventListener('mousemove', (e) => {
+                const rect = aboutSection.getBoundingClientRect();
+                const xPos = e.clientX - rect.left;
+                const yPos = e.clientY - rect.top;
+                
+                // Calculate rotation based on mouse position inside the About Section
+                const xRotation = ((yPos / rect.height) - 0.5) * -30; 
+                const yRotation = ((xPos / rect.width) - 0.5) * 30;
+
+                gsap.to(aboutImgWrap, {
+                    rotationX: xRotation,
+                    rotationY: yRotation,
+                    transformPerspective: 1000,
+                    duration: 0.5,
+                    ease: "power2.out"
+                });
+            });
+
+            aboutSection.addEventListener('mouseleave', () => {
+                gsap.to(aboutImgWrap, { rotationX: 0, rotationY: 0, duration: 0.8, ease: "elastic.out(1, 0.5)" });
+            });
+        }
+
+        // Hero Section Floating Animation
+        gsap.to(".hero-element", {
+            y: -10,
+            duration: 2,
+            ease: "power1.inOut",
+            repeat: -1,
+            yoyo: true,
+            stagger: 0.2 // Stagger the floating effect slightly
+        });
+
+        // GSAP ScrollTrigger Animations for revealing elements
+        // Common animation properties
+        const revealAnimation = {
+            opacity: 1,
+            y: 0,
+            duration: 1,
+            ease: "power3.out",
+            stagger: 0.15 // Default stagger for general elements
+        };
+
+        // Animate sections and general elements
+        gsap.utils.toArray(".gsap-reveal").forEach(element => {
+            gsap.fromTo(element,
+                { opacity: 0, y: 50 },
+                {
+                    opacity: 1,
+                    y: 0,
+                    duration: 1,
+                    ease: "power3.out",
+                    scrollTrigger: {
+                        trigger: element,
+                        start: "top 85%", // When the top of the element hits 85% of the viewport height
+                        end: "bottom top",
+                        toggleActions: "play none none none", // Play animation once
+                        // markers: true // Uncomment for debugging scroll trigger
+                    }
+                }
+            );
+        });
+
+        // --- Terminal Typewriter Effect ---
+        const terminalBody = document.getElementById('terminal-body');
+        if (terminalBody) {
+            const terminalLines = [
+                { text: "whoami", type: "cmd" },
+                { text: "<span class=\"text-red-500 font-bold\">root</span> (Cyber Security Specialist)", type: "output", class: "text-gray-300 mb-3" },
+                { text: "./load_skills.sh", type: "cmd" },
+                { text: "[+] Initializing payload...", type: "output", class: "text-yellow-400 mb-1", sound: "payloadBeep" },
+                { text: "[+] Access granted. Welcome.", type: "output", class: "text-green-400 mb-3", sound: "accessGrantedBeep" }
+            ];
+
+            let terminalStarted = false;
+
+            async function typeTerminal() {
+                if (terminalStarted) return;
+                terminalStarted = true;
+                terminalBody.innerHTML = ''; // លុបទិន្នន័យចាស់ចេញ
+                
+                const promptHTML = `<span class="text-blue-400">boxi@kali</span>:<span class="text-blue-400">~</span>$ `;
+                
+                for (let i = 0; i < terminalLines.length; i++) {
+                    const line = terminalLines[i];
+                    const p = document.createElement('p');
+                    p.className = line.class || 'mb-1';
+                    terminalBody.appendChild(p);
+                    
+                    if (line.type === 'cmd') {
+                        p.innerHTML = promptHTML + `<span class="typing"></span><span class="typewriter-cursor"></span>`;
+                        const typeSpan = p.querySelector('.typing');
+                        const cursor = p.querySelector('.typewriter-cursor');
+                        
+                        for (let char of line.text) {
+                            typeSpan.innerHTML += char;
+                            if (typeof playSciFiSound === 'function') playSciFiSound('typing'); // លេងសំឡេងវាយអក្សរ
+                            await new Promise(r => setTimeout(r, 40 + Math.random() * 60)); // ល្បឿនវាយអក្សរចៃដន្យ (លឿន-យឺតៗ)
+                        }
+                        await new Promise(r => setTimeout(r, 400)); // រង់ចាំបន្តិចមុនលោតចេញលទ្ធផល
+                        if (cursor) cursor.remove();
+                    } else {
+                        p.innerHTML = line.text;
+                        if (line.sound && typeof playSciFiSound === 'function') {
+                            playSciFiSound(line.sound);
+                        }
+                        await new Promise(r => setTimeout(r, 200)); // រង់ចាំចន្លោះពេលលោតចេញលទ្ធផលមួយទៅមួយ
+                    }
+                }
+                
+                const finalP = document.createElement('p');
+                finalP.innerHTML = promptHTML + `<span class="typewriter-cursor"></span>`;
+                terminalBody.appendChild(finalP);
+            }
+
+            // ចាប់ផ្តើមវាយអក្សរដោយស្វ័យប្រវត្តិនៅពេល Scroll មកដល់ផ្ទាំង Terminal នេះ
+            ScrollTrigger.create({
+                trigger: terminalBody,
+                start: "top 85%",
+                onEnter: typeTerminal,
+                once: true // ឲ្យលោតតែម្តងគត់
+            });
+        }
+
+        // Flashing/Glowing animation for section headings on scroll
+        gsap.utils.toArray("section h2.gradient-text, footer h2.gradient-text").forEach(heading => {
+            gsap.to(heading, {
+                scale: 1.05, // Make it pop
+                filter: "drop-shadow(0px 0px 15px rgba(57, 255, 20, 0.8))", // Single, stronger green glow
+                duration: 0.25,
+                yoyo: true,
+                repeat: 3, // ធ្វើឲ្យលោតភ្លឺ ៣ ដង
+                delay: 0.6, // រង់ចាំឲ្យអក្សរផុសចេញមកពីក្រោមសិន ទើបចាប់ផ្តើមបញ្ចេញពន្លឺ
+                ease: "power2.inOut",
+                scrollTrigger: {
+                    trigger: heading,
+                    start: "top 85%", // ចាប់ផ្តើមនៅពេលចំណងជើងចូលមកដល់ 85% នៃកម្ពស់អេក្រង់
+                    toggleActions: "play none none none"
+                }
+            });
+        });
+
+        // Staggered animation for skill cards
+        gsap.from(".skill-card", {
+            opacity: 0,
+            y: 50,
+            duration: 0.8,
+            ease: "power3.out",
+            stagger: 0.1, // Stagger each skill card
+            scrollTrigger: {
+                trigger: "#skills .grid",
+                start: "top 80%",
+                end: "bottom top",
+                toggleActions: "play none none none",
+                // markers: true
+            }
+        });
+
+        // Optional: Blob animation for hero section (more complex, but adds flair)
+        gsap.to(".animate-blob", {
+            x: "random(-100, 100)",
+            y: "random(-100, 100)",
+            scale: "random(0.8, 1.2)",
+            rotation: "random(-30, 30)",
+            duration: 8,
+            ease: "power1.inOut",
+            repeat: -1,
+            yoyo: true,
+            stagger: {
+                each: 0.5,
+                from: "random"
+            }
+        });
+
+        // 3D Flip Hover Effect for Skill Cards using GSAP
+        document.querySelectorAll('.skill-card').forEach(card => {
+            card.addEventListener('mouseenter', () => {
+                gsap.to(card, {
+                    y: -10,
+                    scale: 1.05,
+                    rotationY: 360,
+                    transformPerspective: 1000,
+                    duration: 0.8,
+                    ease: "back.out(1.5)",
+                    overwrite: "auto"
+                });
+            });
+            card.addEventListener('mouseleave', () => {
+                gsap.to(card, {
+                    y: 0,
+                    scale: 1,
+                    rotationY: 0, // Spin back to normal
+                    duration: 0.8,
+                    ease: "power2.out",
+                    overwrite: "auto"
+                });
+            });
+        });
+
+        // --- Skills Filter Logic ---
+        const filterBtns = document.querySelectorAll('.filter-btn');
+        const skillCards = document.querySelectorAll('.skill-card');
+
+        filterBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                // Reset all buttons styling
+                filterBtns.forEach(b => {
+                    b.classList.remove('bg-gradient-custom', 'text-white', 'border-transparent', 'hover:brightness-110', 'hover:hue-rotate-15', 'hover:scale-105', 'shadow-md', 'hover:shadow-purple-500/50');
+                    b.classList.add('text-[var(--text-color-primary)]', 'border-[var(--input-border-color)]', 'hover:border-purple-500', 'hover:bg-purple-500/20');
+                });
+                
+                // Apply active styling to clicked button
+                btn.classList.add('bg-gradient-custom', 'text-white', 'border-transparent', 'hover:brightness-110', 'hover:hue-rotate-15', 'hover:scale-105', 'shadow-md', 'hover:shadow-purple-500/50');
+                btn.classList.remove('text-[var(--text-color-primary)]', 'border-[var(--input-border-color)]', 'hover:border-purple-500', 'hover:bg-purple-500/20');
+
+                const filterValue = btn.getAttribute('data-filter');
+
+                skillCards.forEach(card => {
+                    if (filterValue === 'all' || card.getAttribute('data-category') === filterValue) {
+                        card.style.display = 'block';
+                        gsap.fromTo(card, 
+                            { opacity: 0, scale: 0.8 }, 
+                            { opacity: 1, scale: 1, duration: 0.4, ease: "back.out(1.5)" }
+                        );
+                    } else {
+                        card.style.display = 'none';
+                    }
+                });
+                
+                // Refresh ScrollTrigger to recalculate page height for other sections
+                setTimeout(() => ScrollTrigger.refresh(), 100);
+            });
+        });
+
+        // --- Mobile Navigation Toggle ---
+        const hamburgerBtn = document.getElementById('hamburger-menu-btn');
+        const navLinks = document.getElementById('nav-links');
+        const hamburgerIconImg = document.getElementById('hamburger-icon-img');
+        const closeIconFa = document.getElementById('close-icon-fa');
+        const mobileMenuOverlay = document.getElementById('mobile-menu-overlay');
+
+        function toggleMobileMenu() {
+            if (!navLinks) return;
+            navLinks.classList.toggle('mobile-menu-open');
+            document.body.classList.toggle('mobile-menu-active'); // សម្រាប់ overlay និងការពារកុំឱ្យ Scroll ខាងក្រោយ
+            mobileMenuOverlay.classList.toggle('opacity-0');
+            mobileMenuOverlay.classList.toggle('invisible');
+
+            if (navLinks.classList.contains('mobile-menu-open')) {
+                hamburgerIconImg.classList.add('hidden');
+                closeIconFa.classList.remove('hidden');
+                hamburgerBtn.setAttribute('aria-label', 'Close navigation menu');
+            } else {
+                hamburgerIconImg.classList.remove('hidden');
+                closeIconFa.classList.add('hidden');
+                hamburgerBtn.setAttribute('aria-label', 'Open navigation menu');
+            }
+        }
+
+        if (hamburgerBtn) hamburgerBtn.addEventListener('click', toggleMobileMenu);
+        if (mobileMenuOverlay) mobileMenuOverlay.addEventListener('click', toggleMobileMenu);
+
+        // Smooth scroll to anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const targetId = this.getAttribute('href');
+                const targetElement = document.querySelector(targetId);
+                if (targetElement) {
+                    lenis.scrollTo(targetElement);
+
+                    // Close mobile menu if it's currently open
+                    if (navLinks && navLinks.classList.contains('mobile-menu-open')) {
+                        toggleMobileMenu(); // Call the function to close the menu
+                    }
+                }
+            });
+        });
+
+        // Theme Toggle Logic
+        const themeToggle = document.getElementById('theme-toggle');
+        const body = document.body;
+        const prefersDarkScheme = window.matchMedia('(prefers-color-scheme: dark)');
+
+        // Function to set the theme
+        function setTheme(theme) {
+            if (theme === 'light') {
+                body.classList.add('light-mode');
+                themeToggle.innerHTML = '<img src="circle-half-stroke-solid.png" alt="Toggle Theme" class="w-6 h-6 object-contain drop-shadow-md">';
+            } else {
+                body.classList.remove('light-mode');
+                themeToggle.innerHTML = '<img src="circle-half-stroke-solid.png" alt="Toggle Theme" class="w-6 h-6 object-contain drop-shadow-md invert">';
+            }
+            localStorage.setItem('theme', theme);
+        }
+
+        // Initialize theme on load
+        const currentTheme = localStorage.getItem('theme');
+        if (currentTheme) {
+            setTheme(currentTheme);
+        } else if (prefersDarkScheme.matches) {
+            setTheme('dark'); // Default to dark if system prefers it and no local storage
+        } else {
+            setTheme('light'); // Default to light if system prefers it and no local storage
+        }
+
+        // Event listener for toggle button
+        themeToggle.addEventListener('click', () => {
+            const newTheme = body.classList.contains('light-mode') ? 'dark' : 'light';
+            
+            // --- Flash Transition Effect (កុងតាក់ភ្លើង) ---
+            let flashOverlay = document.getElementById('flash-overlay');
+            if (!flashOverlay) {
+                flashOverlay = document.createElement('div');
+                flashOverlay.id = 'flash-overlay';
+                flashOverlay.className = 'fixed inset-0 z-[99999] pointer-events-none opacity-0';
+                document.body.appendChild(flashOverlay);
+            }
+            flashOverlay.style.backgroundColor = newTheme === 'light' ? '#ffffff' : '#0f172a';
+            
+            gsap.to(flashOverlay, {
+                opacity: 1,
+                duration: 0.15,
+                onComplete: () => {
+                    setTheme(newTheme);
+                    gsap.to(flashOverlay, { opacity: 0, duration: 0.3, ease: "power2.out" });
+                }
+            });
+        });
+
+        // --- Project Data (Simple CMS) ---
+        const projectsData = [
+            {
+                id: 'wormgpt-project',
+                title: 'WormGPT & Custom GPT',
+                category: 'other',
+                description: 'An experimental AI project inspired by WormGPT, designed for cybersecurity research and penetration testing. It demonstrates the capabilities and risks of unfiltered language models in comparison to standard GPT models, focusing on advanced prompt engineering and security automation.',
+                techTags: ['Python', 'AI/ML', 'Cyber Security', 'LLM'],
+                images: [
+                    'wormgpt.jpg',
+                    'gpt.jpg'
+                ],
+                link: '#'
+            },
+            {
+                id: 'ecommerce-dashboard',
+                title: 'Modern E-Commerce Dashboard',
+                category: 'frontend',
+                description: 'A fully responsive and interactive e-commerce dashboard featuring real-time data visualization, user management, and advanced filtering options designed with a focus on UI/UX.',
+                techTags: ['React.js', 'Tailwind CSS', 'JavaScript', 'UI/UX Design'],
+                images: [
+                    'https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=600&h=400&fit=crop',
+                    'https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=600&h=400&fit=crop',
+                    'https://images.unsplash.com/photo-1555421689-491a97ff2040?w=600&h=400&fit=crop'
+                ],
+                link: '#'
+            },
+            {
+                id: 'ethical-hacking-lab',
+                title: 'Ethical Hacking Lab',
+                category: 'other',
+                description: 'A simulated penetration testing environment designed to practice vulnerability assessment, network exploitation, and security auditing using industry-standard tools.',
+                techTags: ['Kali Linux', 'Metasploit', 'Nmap', 'Cyber Security'],
+                images: [
+                    'https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?w=600&h=400&fit=crop',
+                    'https://images.unsplash.com/photo-1555949963-aa79dcee981c?w=600&h=400&fit=crop',
+                    'https://images.unsplash.com/photo-1618060932014-4bcd49f75258?w=600&h=400&fit=crop',
+                    'https://images.unsplash.com/photo-1510511459019-5d65a25ee0f7?w=600&h=400&fit=crop'
+                ],
+                link: '#'
+            },
+            {
+                id: 'immersive-portfolio',
+                title: 'Immersive Portfolio Website',
+                category: 'frontend',
+                description: 'A highly interactive portfolio website utilizing GSAP animations, 3D CSS effects, and a custom WebGL background to deliver a unique and engaging user experience.',
+                techTags: ['HTML5', 'CSS3', 'JavaScript', 'Frontend'],
+                images: [
+                    'https://images.unsplash.com/photo-1507238691740-187a5b1d37b8?w=600&h=400&fit=crop',
+                    'https://images.unsplash.com/photo-1498050108023-c5249f4df085?w=600&h=400&fit=crop',
+                    'https://images.unsplash.com/photo-1547658719-da2b51151106?w=600&h=400&fit=crop'
+                ],
+                link: '#'
+            },
+            {
+                id: 'network-security-architecture',
+                title: 'Network Security Architecture',
+                category: 'other',
+                description: 'Designed and implemented a secure network infrastructure with advanced firewall configurations, intrusion detection systems (IDS), and encrypted VPN tunnels to protect sensitive data.',
+                techTags: ['Network Security', 'Firewall', 'IDS/IPS', 'VPN'],
+                images: [
+                    'https://images.unsplash.com/photo-1558494949-ef010cbdcc31?w=600&h=400&fit=crop',
+                    'https://images.unsplash.com/photo-1544197150-b99a580bb7a8?w=600&h=400&fit=crop',
+                    'https://images.unsplash.com/photo-1563986768609-322da13575f3?w=600&h=400&fit=crop',
+                    'https://images.unsplash.com/photo-1620825937374-87fc2d6def3c?w=600&h=400&fit=crop'
+                ],
+                link: '#'
+            },
+            {
+                id: 'scalable-api',
+                title: 'Scalable RESTful API Service',
+                category: 'backend',
+                description: 'A robust and scalable RESTful API built with Node.js and Express, featuring JWT authentication, role-based access control, and comprehensive API documentation.',
+                techTags: ['Node.js', 'Python', 'Databases', 'Backend'],
+                images: [
+                    'https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=600&h=400&fit=crop',
+                    'https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?w=600&h=400&fit=crop',
+                    'https://images.unsplash.com/photo-1518770660439-4636190af475?w=600&h=400&fit=crop'
+                ],
+                link: '#'
+            },
+            {
+                id: 'malware-analysis-tool',
+                title: 'Malware Analysis Tool',
+                category: 'other',
+                description: 'A comprehensive toolset developed for static and dynamic analysis of malicious software, enabling safe reverse engineering and threat intelligence gathering.',
+                techTags: ['Python', 'Reverse Engineering', 'Assembly', 'Malware Analysis'],
+                images: [
+                    'https://images.unsplash.com/photo-1526374865366-af0a487c9569?w=600&h=400&fit=crop',
+                    'https://images.unsplash.com/photo-1614064641913-a5323ea51f08?w=600&h=400&fit=crop',
+                    'https://images.unsplash.com/photo-1550751827-4bd374c3f58b?w=600&h=400&fit=crop',
+                    'https://images.unsplash.com/photo-1515630278258-407f66498911?w=600&h=400&fit=crop'
+                ],
+                link: '#'
+            },
+            {
+                id: 'realtime-chat-server',
+                title: 'Real-time Chat Server',
+                category: 'backend',
+                description: 'A high-performance real-time chat server using WebSockets, supporting multiple chat rooms, direct messaging, and message history storage for seamless communication.',
+                techTags: ['Python', 'Node.js', 'Databases', 'Backend'],
+                images: [
+                    'https://images.unsplash.com/photo-1558494949-ef010cbdcc31?w=600&h=400&fit=crop',
+                    'https://images.unsplash.com/photo-1544197150-b99a580bb7a8?w=600&h=400&fit=crop',
+                    'https://images.unsplash.com/photo-1563986768609-322da13575f3?w=600&h=400&fit=crop'
+                ],
+                link: '#'
+            },
+            {
+                id: 'osint-framework',
+                title: 'OSINT Framework',
+                category: 'other',
+                description: 'An Open-Source Intelligence (OSINT) framework designed to gather, analyze, and visualize public data for threat intelligence and security investigations.',
+                techTags: ['Python', 'OSINT', 'Data Gathering', 'Intelligence'],
+                images: [
+                    'https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=600&h=400&fit=crop',
+                    'https://images.unsplash.com/photo-1504868584819-f8e8b4b6d7e3?w=600&h=400&fit=crop',
+                    'https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?w=600&h=400&fit=crop',
+                    'https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=600&h=400&fit=crop'
+                ],
+                link: '#'
+            },
+            {
+                id: 'custom-cryptography-algorithm',
+                title: 'Custom Cryptography Algorithm',
+                category: 'other',
+                description: 'Developed a proprietary encryption algorithm and secure key exchange mechanism to ensure end-to-end data confidentiality and integrity against cryptographic attacks.',
+                techTags: ['Python', 'Cryptography', 'Security', 'Algorithms'],
+                images: [
+                    'https://images.unsplash.com/photo-1614064010287-e2154c1f9640?w=600&h=400&fit=crop',
+                    'https://images.unsplash.com/photo-1510511233900-1982d92bd835?w=600&h=400&fit=crop',
+                    'https://images.unsplash.com/photo-1633265486064-086b219458ce?w=600&h=400&fit=crop',
+                    'https://images.unsplash.com/photo-1526304640581-d334cdbbf45e?w=600&h=400&fit=crop'
+                ],
+                link: '#'
+            }
+        ];
+
+        // Function to render project cards
+        function renderProjectCards() {
+            const projectsGrid = document.getElementById('projects-grid');
+            projectsGrid.innerHTML = ''; // Clear existing cards
+            projectsData.forEach(project => {
+                const techTagsHtml = project.techTags.map(tag => {
+                    // Assign a color based on the tag for variety, or use a fixed color
+                    const tagColorClass = {
+                        'Python': 'bg-purple-700 text-purple-100',
+                        'CustomTkinter': 'bg-pink-700 text-pink-100',
+                        'Video Processing': 'bg-blue-700 text-blue-100',
+                        'AI/ML': 'bg-green-700 text-green-100',
+                        'JavaScript': 'bg-yellow-700 text-yellow-100',
+                        'Tailwind CSS': 'bg-cyan-700 text-cyan-100',
+                        'API Integration': 'bg-red-700 text-red-100',
+                        'UI/UX Design': 'bg-purple-700 text-purple-100',
+                        'Figma': 'bg-pink-700 text-pink-100',
+                        'Responsive Web': 'bg-blue-700 text-blue-100',
+                        'Scripting': 'bg-yellow-700 text-yellow-100',
+                        'Efficiency': 'bg-gray-700 text-gray-100',
+                        'HTML5': 'bg-orange-700 text-orange-100',
+                        'CSS3': 'bg-blue-700 text-blue-100',
+                        'Data Viz': 'bg-yellow-700 text-yellow-100',
+                        'Frontend': 'bg-cyan-700 text-cyan-100',
+                    'Cyber Security': 'bg-red-800 text-red-100',
+                    'LLM': 'bg-indigo-700 text-indigo-100',
+                    'Kali Linux': 'bg-slate-800 text-slate-100',
+                    'Metasploit': 'bg-blue-800 text-blue-100',
+                    'Nmap': 'bg-orange-800 text-orange-100',
+                    'Network Security': 'bg-emerald-700 text-emerald-100',
+                    'Firewall': 'bg-red-700 text-red-100',
+                    'IDS/IPS': 'bg-yellow-700 text-yellow-100',
+                    'VPN': 'bg-blue-700 text-blue-100',
+                    'Reverse Engineering': 'bg-purple-800 text-purple-100',
+                    'Assembly': 'bg-gray-800 text-gray-100',
+                    'Malware Analysis': 'bg-red-900 text-red-100',
+                    'OSINT': 'bg-teal-800 text-teal-100',
+                    'Data Gathering': 'bg-emerald-800 text-emerald-100',
+                    'Intelligence': 'bg-blue-900 text-blue-100',
+                    'Cryptography': 'bg-amber-800 text-amber-100',
+                    'Security': 'bg-rose-800 text-rose-100',
+                    'Algorithms': 'bg-violet-800 text-violet-100',
+                    }[tag] || 'bg-gray-600 text-gray-100'; // Default color
+                    return `<span class="${tagColorClass} text-xs font-medium px-2.5 py-0.5 rounded-full">${tag}</span>`;
+                }).join('');
+
+                const projectCardHtml = `
+                    <div class="project-card rounded-xl shadow-xl overflow-hidden glassmorphism gsap-reveal cursor-pointer" data-category="${project.category}" onclick="openProjectModal('${project.id}')">
+                        <div class="relative w-full h-48 overflow-hidden project-image-carousel"
+                             data-images='${JSON.stringify(project.images)}'>
+                            <button class="absolute left-2 top-1/2 -translate-y-1/2 bg-black bg-opacity-50 text-white p-2 rounded-full hover:bg-opacity-75 transition-all duration-200 z-10 prev-image-btn" aria-label="Previous image">
+                                <i class="fas fa-chevron-left"></i>
+                            </button>
+                            <button class="absolute right-2 top-1/2 -translate-y-1/2 bg-black bg-opacity-50 text-white p-2 rounded-full hover:bg-opacity-75 transition-all duration-200 z-10 next-image-btn" aria-label="Next image">
+                                <i class="fas fa-chevron-right"></i>
+                            </button>
+                            <div class="project-scanline"></div>
+                            <img src="${project.images[0]}"
+                                 alt="${project.title} Screenshot 1"
+                                 class="current-project-image object-cover w-full h-full transition-opacity duration-300 opacity-100"
+                                 draggable="false"
+                                 width="600" height="400"
+                                 loading="lazy"
+                                 onerror="this.onerror=null; this.src='wormgpt.jpg';">
+                            <div class="absolute bottom-2 left-0 right-0 flex justify-center space-x-1 z-10 image-dots"></div>
+                        </div>
+                        <div class="p-6">
+                            <h3 class="text-2xl font-bold mb-3 gradient-text">${project.title}</h3>
+                            <p class="text-[var(--text-color-secondary)] mb-4">${project.description}</p>
+                            <div class="flex flex-wrap gap-2 mb-4" style="min-height: 2.5rem;">
+                                ${techTagsHtml}
+                            </div>
+                            <div class="flex flex-wrap justify-between items-center gap-3 mt-2">
+                                <span class="text-green-400 hover:text-green-300 font-semibold transition-colors duration-200">View Details <i class="fas fa-arrow-right ml-1"></i></span>
+                                <a href="${project.github || 'https://github.com/bantu01001'}" target="_blank" onclick="event.stopPropagation();" class="flex items-center gap-2 bg-[#24292e] hover:bg-[#1b1f23] border border-gray-600 text-white px-3 py-1.5 rounded text-sm font-medium transition-colors duration-300 shadow-md" title="Source Code">
+                                    <i class="fab fa-github text-lg"></i>
+                                    Source
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                projectsGrid.insertAdjacentHTML('beforeend', projectCardHtml);
+            });
+            // Re-initialize carousels and GSAP animations after rendering
+            initializeProjectCarousels();
+            initializeProjectCardAnimations();
+            setupProjectFilters();
+        }
+
+        // Call render function on page load
+        document.addEventListener('DOMContentLoaded', renderProjectCards);
+
+        // --- Projects Filter Logic ---
+        function setupProjectFilters() {
+            const filterBtns = document.querySelectorAll('.project-filter-btn');
+            const projectCards = document.querySelectorAll('.project-card');
+
+            filterBtns.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    // Reset all buttons styling
+                    filterBtns.forEach(b => { // Corrected from skill filter logic
+                        b.classList.remove('bg-gradient-custom', 'text-black', 'border-transparent', 'hover:brightness-110', 'hover:hue-rotate-15', 'hover:scale-105', 'shadow-md', 'hover:shadow-green-500/50');
+                        b.classList.add('text-[var(--text-color-primary)]', 'border-[var(--input-border-color)]', 'hover:border-green-500', 'hover:bg-green-500/20');
+                    });
+                    
+                    // Apply active styling to clicked button
+                    btn.classList.add('bg-gradient-custom', 'text-black', 'border-transparent', 'hover:brightness-110', 'hover:hue-rotate-15', 'hover:scale-105', 'shadow-md', 'hover:shadow-green-500/50');
+                    btn.classList.remove('text-[var(--text-color-primary)]', 'border-[var(--input-border-color)]', 'hover:border-green-500', 'hover:bg-green-500/20');
+
+                    const filterValue = btn.getAttribute('data-filter');
+
+                    projectCards.forEach(card => {
+                        if (filterValue === 'all' || card.getAttribute('data-category') === filterValue) {
+                            card.style.display = 'block';
+                            gsap.fromTo(card, 
+                                { opacity: 0, scale: 0.8 }, 
+                                { opacity: 1, scale: 1, duration: 0.4, ease: "back.out(1.5)" }
+                            );
+                        } else {
+                            card.style.display = 'none';
+                        }
+                    });
+                    
+                    // Refresh ScrollTrigger to recalculate page height for other sections
+                    setTimeout(() => ScrollTrigger.refresh(), 100);
+                });
+            });
+        }
+
+        // --- Modal Logic ---
+        const modal = document.getElementById('project-modal');
+        const modalData = document.getElementById('modal-data');
+        const closeModalBtn = document.getElementById('close-modal');
+        let modalSlideshowInterval;
+
+        window.openProjectModal = function(id) {
+            const project = projectsData.find(p => p.id === id);
+            if (!project) return;
+
+            clearInterval(modalSlideshowInterval); // Clear any running interval
+
+            modalData.innerHTML = `
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <div class="space-y-4">
+                        <img id="modal-main-img" src="${project.images[0]}" class="rounded-xl w-full h-64 md:h-80 object-cover shadow-2xl transition-opacity duration-300" alt="${project.title}" onerror="this.onerror=null; this.src='wormgpt.jpg';">
+                        <div class="grid grid-cols-4 gap-2 mt-4">
+                            ${project.images.map((img, index) => `<img src="${img}" data-index="${index}" class="modal-thumbnail cursor-pointer rounded-lg h-16 md:h-20 w-full object-cover opacity-60 hover:opacity-100 transition-all duration-200" onerror="this.style.display='none'">`).join('')}
+                        </div>
+                    </div>
+                    <div>
+                        <h2 class="text-3xl font-bold mb-4 gradient-text">${project.title}</h2>
+                        <p class="text-slate-300 mb-6 text-lg">${project.description}</p>
+                        <div class="flex flex-wrap gap-2 mb-8">${project.techTags.map(t => `<span class="bg-slate-700 px-3 py-1 rounded-full text-sm">${t}</span>`).join('')}</div>
+                        <div class="flex flex-wrap gap-4">
+                            <a href="${project.link}" target="_blank" class="inline-block bg-gradient-custom text-black font-semibold px-8 py-3 rounded-full shadow-lg hover:shadow-xl transition-all duration-300">Live Demo</a>
+                            <a href="${project.github || 'https://github.com/bantu01001'}" target="_blank" class="inline-flex items-center gap-2 bg-[#24292e] text-white font-semibold px-8 py-3 rounded-full shadow-lg hover:bg-gray-700 transition-all duration-300 border border-gray-600"><i class="fab fa-github text-xl"></i> Source Code</a>
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            modal.classList.add('show');
+            document.body.classList.add('modal-active');
+            
+            gsap.fromTo(".modal-content-anim", 
+                { scale: 0.8, opacity: 0, y: 50 },
+                { scale: 1, opacity: 1, y: 0, duration: 0.5, ease: "back.out(1.7)" }
+            );
+
+            // Auto Slideshow Logic
+            let currentImgIndex = 0;
+            const mainImg = document.getElementById('modal-main-img');
+
+            // --- 3D Tilt Effect for Modal Image ---
+            if (mainImg) {
+                mainImg.parentElement.style.perspective = '1000px'; // បន្ថែមជម្រៅ 3D ទៅលើ container ខាងក្រៅ
+                
+                mainImg.addEventListener('mousemove', (e) => {
+                    const rect = mainImg.getBoundingClientRect();
+                    const xPos = e.clientX - rect.left;
+                    const yPos = e.clientY - rect.top;
+                    
+                    const xRotation = ((yPos / rect.height) - 0.5) * -20; // ផ្អៀងចុះឡើង (អតិបរមា ២០ ដឺក្រេ)
+                    const yRotation = ((xPos / rect.width) - 0.5) * 20;   // ផ្អៀងឆ្វេងស្តាំ
+
+                    gsap.to(mainImg, {
+                        rotationX: xRotation,
+                        rotationY: yRotation,
+                        transformPerspective: 1000,
+                        duration: 0.5,
+                        ease: "power2.out"
+                    });
+                });
+
+                mainImg.addEventListener('mouseleave', () => {
+                    gsap.to(mainImg, { rotationX: 0, rotationY: 0, duration: 0.8, ease: "elastic.out(1, 0.5)" }); // លោតត្រលប់មកសភាពដើម
+                });
+            }
+
+            if (project.images.length > 1) {
+                modalSlideshowInterval = setInterval(() => {
+                    gsap.to(mainImg, {
+                        opacity: 0,
+                        duration: 0.3,
+                        onComplete: () => {
+                            currentImgIndex = (currentImgIndex + 1) % project.images.length;
+                            mainImg.src = project.images[currentImgIndex];
+                            gsap.to(mainImg, { opacity: 1, duration: 0.3 });
+                        }
+                    });
+                }, 3000); // Change image every 3 seconds
+            }
+            const thumbnails = document.querySelectorAll('.modal-thumbnail');
+
+            const startSlideshow = () => {
+                clearInterval(modalSlideshowInterval);
+                if (project.images.length > 1) {
+                    modalSlideshowInterval = setInterval(() => {
+                        gsap.to(mainImg, {
+                            opacity: 0,
+                            duration: 0.3,
+                            onComplete: () => {
+                                currentImgIndex = (currentImgIndex + 1) % project.images.length;
+                                mainImg.src = project.images[currentImgIndex];
+                                gsap.to(mainImg, { opacity: 1, duration: 0.3 });
+                            }
+                        });
+                    }, 3000); // Change image every 3 seconds
+                }
+            };
+
+            startSlideshow();
+
+            // Thumbnail Hover Effect
+            thumbnails.forEach(thumb => {
+                thumb.addEventListener('mouseenter', function() {
+                    clearInterval(modalSlideshowInterval); // Stop auto slideshow on hover
+                    const newIndex = parseInt(this.getAttribute('data-index'));
+                    if (currentImgIndex !== newIndex) {
+                        currentImgIndex = newIndex;
+                        mainImg.src = this.src; // Instant update for snappy feel
+                    }
+                });
+                
+                // Resume slideshow when mouse leaves
+                thumb.addEventListener('mouseleave', startSlideshow);
+            });
+        };
+
+        function closeModal() {
+            gsap.to(".modal-content-anim", { scale: 0.8, opacity: 0, y: 50, duration: 0.3, onComplete: () => {
+                modal.classList.remove('show');
+                document.body.classList.remove('modal-active');
+                clearInterval(modalSlideshowInterval); // Stop slideshow when closed
+            }});
+        }
+
+        closeModalBtn.addEventListener('click', closeModal);
+        modal.addEventListener('click', (e) => { if(e.target === modal) closeModal(); });
+
+        // --- Project Image Carousel Initialization (now a function) ---
+        function initializeProjectCarousels() {
+            document.querySelectorAll('.project-image-carousel').forEach(carousel => {
+                const images = JSON.parse(carousel.dataset.images);
+                let currentIndex = 0;
+                const imgElement = carousel.querySelector('.current-project-image');
+                const prevBtn = carousel.querySelector('.prev-image-btn');
+                const nextBtn = carousel.querySelector('.next-image-btn');
+                const dotsContainer = carousel.querySelector('.image-dots');
+
+                // Clear existing dots before creating new ones (important if re-rendering)
+                dotsContainer.innerHTML = '';
+
+                // Create dots
+                images.forEach((_, index) => {
+                    const dot = document.createElement('div');
+                    dot.classList.add('w-2', 'h-2', 'rounded-full', 'bg-gray-400', 'cursor-pointer', 'transition-colors', 'duration-200');
+                    if (index === 0) dot.classList.add('bg-white');
+                    dot.addEventListener('click', (e) => { e.stopPropagation(); showImage(index); });
+                    dotsContainer.appendChild(dot);
+                });
+                const dots = dotsContainer.querySelectorAll('div');
+
+                function showImage(index) {
+                    if (index < 0) {
+                        currentIndex = images.length - 1;
+                    } else if (index >= images.length) {
+                        currentIndex = 0;
+                    } else {
+                        currentIndex = index;
+                    }
+
+                    // Fade out, change src, fade in
+                    gsap.to(imgElement, {
+                        opacity: 0,
+                        duration: 0.2,
+                        onComplete: () => {
+                            imgElement.src = images[currentIndex];
+                            // Assuming project title is available globally or passed
+                            // For now, using a generic alt text update
+                            imgElement.alt = `Project Screenshot ${currentIndex + 1}`;
+                            gsap.to(imgElement, { opacity: 1, duration: 0.3 });
+                        }
+                    });
+
+                    // Update dots
+                    dots.forEach((dot, i) => {
+                        if (i === currentIndex) {
+                            dot.classList.add('bg-white');
+                        } else {
+                            dot.classList.remove('bg-white');
+                        }
+                    });
+                }
+
+                prevBtn.addEventListener('click', (e) => { e.stopPropagation(); showImage(currentIndex - 1); });
+                nextBtn.addEventListener('click', (e) => { e.stopPropagation(); showImage(currentIndex + 1); });
+
+                // --- Swipe/Drag Logic for Mobile and Desktop ---
+                let startX = 0;
+                let startTime = 0;
+
+                const startDragging = (e) => {
+                    startX = e.type.includes('touch') ? e.touches[0].clientX : e.pageX;
+                    startTime = new Date().getTime();
+                };
+
+                const endDragging = (e) => {
+                    const endX = e.type.includes('touch') ? e.changedTouches[0].clientX : e.pageX;
+                    const diffX = startX - endX;
+                    const diffTime = new Date().getTime() - startTime;
+                    
+                    // ប្រសិនបើអូសលើសពី 50px ឬអូសលឿន (Flick)
+                    if (Math.abs(diffX) > 50 || (Math.abs(diffX) > 20 && diffTime < 250)) {
+                        showImage(diffX > 0 ? currentIndex + 1 : currentIndex - 1);
+                    }
+                };
+
+                carousel.addEventListener('touchstart', startDragging, { passive: true });
+                carousel.addEventListener('touchend', endDragging, { passive: true });
+                carousel.addEventListener('mousedown', startDragging);
+                carousel.addEventListener('mouseup', endDragging);
+
+                // ការពារកុំឱ្យបើក Modal ប្រសិនបើអ្នកប្រើប្រាស់កំពុងអូសរូបភាព
+                carousel.addEventListener('click', (e) => {
+                    if (Math.abs(startX - e.pageX) > 10) e.stopPropagation();
+                }, true);
+            });
+        }
+
+        // Function to re-initialize GSAP project card animations
+        function initializeProjectCardAnimations() {
+            gsap.from(".project-card", {
+                opacity: 0,
+                y: 50,
+                duration: 0.8,
+                ease: "power3.out",
+                stagger: 0.15, // Stagger each project card
+                scrollTrigger: {
+                    trigger: "#projects .grid",
+                    start: "top 80%",
+                    end: "bottom top",
+                    toggleActions: "play none none none",
+                    // markers: true
+                }
+            });
+        }
+
+        // --- Contact Form Validation ---
+        const contactForm = document.getElementById('contact-form');
+        const nameInput = document.getElementById('name');
+        const emailInput = document.getElementById('email');
+        const messageTextarea = document.getElementById('message');
+
+        // Function to show error state for an input
+        function showError(inputElement) {
+            inputElement.classList.add('border-red-500');
+            inputElement.classList.remove('border-[var(--input-border-color)]', 'border-green-500');
+        }
+
+        // Function to clear error state for an input
+        function clearError(inputElement) {
+            inputElement.classList.remove('border-red-500', 'border-green-500');
+            inputElement.classList.add('border-[var(--input-border-color)]');
+        }
+
+        // Function to show success state for an input (ពណ៌បៃតង)
+        function showSuccess(inputElement) {
+            inputElement.classList.add('border-green-500');
+            inputElement.classList.remove('border-[var(--input-border-color)]', 'border-red-500');
+        }
+
+        // Add event listeners to clear errors on input
+        nameInput.addEventListener('input', () => clearError(nameInput));
+        
+        // Live Email Validation ពេលកំពុងវាយ
+        emailInput.addEventListener('input', () => {
+            if (emailInput.value.trim() === '') {
+                clearError(emailInput);
+            } else if (emailInput.checkValidity()) {
+                showSuccess(emailInput);
+            } else {
+                showError(emailInput);
+            }
+        });
+        messageTextarea.addEventListener('input', () => clearError(messageTextarea));
+
+        // --- Custom Alert Modal Logic ---
+        const customAlertModal = document.getElementById('custom-alert-modal');
+        const customAlertContent = document.getElementById('custom-alert-content');
+        const customAlertIcon = document.getElementById('custom-alert-icon');
+        const customAlertTitle = document.getElementById('custom-alert-title');
+        const customAlertMessage = document.getElementById('custom-alert-message');
+        const closeCustomAlertBtn = document.getElementById('close-custom-alert');
+
+        function showCustomAlert(type, message) {
+            if (type === 'success') {
+                customAlertIcon.innerHTML = '<i class="fas fa-check-circle text-green-400"></i>';
+                customAlertTitle.textContent = 'Success!';
+                const successSound = document.getElementById('success-sound');
+                if (successSound) { successSound.currentTime = 0; successSound.play().catch(e => console.log('Audio error:', e)); }
+                if (typeof playSciFiSound === 'function') playSciFiSound('success');
+            } else {
+                customAlertIcon.innerHTML = '<i class="fas fa-exclamation-circle text-red-500"></i>';
+                customAlertTitle.textContent = 'Error!';
+                const errorSound = document.getElementById('error-sound');
+                if (errorSound) { errorSound.currentTime = 0; errorSound.play().catch(e => console.log('Audio error:', e)); }
+                if (typeof playSciFiSound === 'function') playSciFiSound('error');
+            }
+            customAlertMessage.textContent = message;
+            
+            customAlertModal.classList.remove('invisible', 'opacity-0');
+            customAlertContent.classList.remove('scale-90');
+            customAlertContent.classList.add('scale-100');
+        }
+
+        function closeCustomAlert() {
+            customAlertModal.classList.add('opacity-0');
+            customAlertContent.classList.remove('scale-100');
+            customAlertContent.classList.add('scale-90');
+            setTimeout(() => {
+                customAlertModal.classList.add('invisible');
+            }, 300);
+        }
+
+        closeCustomAlertBtn.addEventListener('click', closeCustomAlert);
+
+        contactForm.addEventListener('submit', function(e) {
+            let isValid = true;
+            e.preventDefault(); // Prevent form submission
+
+            // Validate Name
+            if (nameInput.value.trim() === '') {
+                showError(nameInput);
+                isValid = false;
+            } else {
+                clearError(nameInput);
+            }
+
+            // Validate Email
+            if (emailInput.value.trim() === '' || !emailInput.checkValidity()) {
+                showError(emailInput);
+                isValid = false;
+            } else {
+                clearError(emailInput);
+            }
+
+            // Validate Message
+            if (messageTextarea.value.trim() === '') {
+                showError(messageTextarea);
+                isValid = false;
+            } else {
+                clearError(messageTextarea);
+            }
+
+            if (!isValid) {
+                showCustomAlert('error', 'Please fill in all required fields correctly.');
+            } else {
+                // Success Simulation
+                showCustomAlert('success', 'Message sent successfully!');
+                // Clear form fields after success
+                nameInput.value = '';
+                emailInput.value = '';
+                messageTextarea.value = '';
+                clearError(nameInput);
+                clearError(emailInput);
+                clearError(messageTextarea);
+            }
+        });
+
+        // --- Back to Top Button Logic ---
+        const backToTopButton = document.getElementById('back-to-top');
+        const scrollThreshold = 300; // Distance in pixels to scroll before button appears
+        const navbar = document.querySelector('nav');
+        let lastScrollY = 0;
+        let lastScrollTick = 0;
+
+        // Show/hide button on scroll
+        lenis.on('scroll', ({ scroll, velocity }) => {
+            // Back to Top Button logic
+            if (scroll > scrollThreshold) {
+                gsap.to(backToTopButton, { autoAlpha: 1, duration: 0.3 });
+            } else {
+                gsap.to(backToTopButton, { autoAlpha: 0, duration: 0.3 });
+            }
+
+            // Smart Navigation Bar logic using GSAP for a smoother "Slide Down"
+            if (scroll > lastScrollY && scroll > 100) {
+                // Hide Navbar (Slide Up)
+                gsap.to(navbar, { yPercent: -105, duration: 0.4, ease: "power2.in" });
+            } else {
+                // Show Navbar (Slide Down)
+                gsap.to(navbar, { yPercent: 0, duration: 0.6, ease: "power4.out" });
+            }
+            lastScrollY = scroll;
+            
+            // គ្រប់គ្រងសំឡេងពេល Scroll (បន្លឺឡើងរាល់ចម្ងាយ 50px)
+            if (Math.abs(scroll - lastScrollTick) > 50) {
+                if (typeof playSciFiSound === 'function') playSciFiSound('scroll', velocity);
+                lastScrollTick = scroll;
+            }
+        });
+
+        // Scroll to top on button click
+        backToTopButton.addEventListener('click', () => {
+            lenis.scrollTo(0, { duration: 1.2, easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)) });
+        });
+
+        // --- Attach Sci-Fi Sounds to Elements ---
+        // Unlock audio context on first user interaction
+            ['click', 'touchstart', 'keydown'].forEach(evt => {
+                document.body.addEventListener(evt, () => {
+                    if (audioCtx.state === 'suspended') audioCtx.resume();
+                }, { once: true });
+            });
+
+        document.body.addEventListener('mouseover', (e) => {
+            const target = e.target.closest('a, button, .skill-card, .project-card, .filter-btn, .project-filter-btn');
+            if (target && target !== hoveredElement) {
+                if (target.classList.contains('project-card')) {
+                    playSciFiSound('cyber-card'); // លេងសំឡេងពិសេសសម្រាប់កាត Project
+                } else {
+                    playSciFiSound('hover');
+                }
+                hoveredElement = target;
+            }
+        });
+        document.body.addEventListener('mouseout', (e) => {
+            const target = e.target.closest('a, button, .skill-card, .project-card, .filter-btn, .project-filter-btn');
+            if (target && e.relatedTarget && !target.contains(e.relatedTarget)) {
+                 hoveredElement = null;
+            }
+        });
+        document.body.addEventListener('mousedown', (e) => {
+            if (e.target.closest('a, button, .skill-card, .project-card, .filter-btn, .project-filter-btn, .modal-thumbnail')) {
+                playSciFiSound('click');
+            }
+        });
+    </script>
+</body>
+</html>
+        
+   

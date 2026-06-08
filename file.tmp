@@ -1,0 +1,31 @@
+--- a/c:\Users\០១០០១\Desktop\01001\index.html
++++ b/c:\Users\០១០០១\Desktop\01001\index.html
+@@ -82,6 +82,21 @@
+         #theme-toggle:hover i, #theme-toggle:hover img {
+             transform: rotate(20deg);
+         }
++
++        /* Underline Effect for Nav Links */
++        .nav-link {
++            position: relative;
++        }
++
++        .nav-link::after {
++            content: '';
++            position: absolute;
++            bottom: 0; /* Position at the bottom of the link */
++            left: 0;
++            width: 0; /* Starts hidden */
++            height: 2px; /* Thickness of the underline */
++            background-color: white; /* White color */
++            transition: width 0.3s ease-in-out; /* Smooth transition for width */
++        }
++
++        /* Expand underline on hover or when active */
++        .nav-link:hover::after,
++        .nav-link.active::after {
++            width: 100%;
++        }
+         /* Active Navigation Link Styling */
+         .nav-link.active {
+             background-image: linear-gradient(to right, var(--accent-color-start), var(--accent-color-end));
